@@ -132,5 +132,12 @@ namespace _24S
             System.Diagnostics.Debug.WriteLine(String.Format("Set Ground Station Mode Enabled to {0}: {1}", value, errSetGroundStationModeEnabled.ToString()));
             return errSetGroundStationModeEnabled;
         }
+
+        public async Task<SDKError> RotateGimbalByAngle(double pitch = 0.0, double roll = 0.0, double yaw = 0.0, double duration = 1.0)
+        {
+            SDKError errRotateGimbalByAngle = await DJISDKManager.Instance.ComponentManager.GetGimbalHandler(0, 0).RotateByAngleAsync(new GimbalAngleRotation() { pitch = pitch, roll = roll, yaw = yaw, duration = duration });
+            System.Diagnostics.Debug.WriteLine(String.Format("Rotate by angle: {0}", errRotateGimbalByAngle.ToString()));
+            return errRotateGimbalByAngle;
+        }
     }
 }

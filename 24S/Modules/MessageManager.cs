@@ -144,6 +144,18 @@ namespace _24S
                     resultCode = SDKError.NO_ERROR.ToString();//TODO
                 }
                     
+            }else if (commandTpye.Equals("GIMBAL"))
+            {
+                if (command.Equals("ROTATE_GIMBAL"))
+                {
+                    JObject infoCommand = (JObject)messageObject.SelectToken("COMMAND_INFO");
+                    double pitch = (double)infoCommand.SelectToken("pitch");
+                    double roll = (double)infoCommand.SelectToken("roll");
+                    double yaw = (double)infoCommand.SelectToken("yaw");
+                    double duration = (double)infoCommand.SelectToken("duration");
+                    SDKError err = await DJIComponentManager.Instance.RotateGimbalByAngle(pitch, roll, yaw, duration);
+                    resultCode = err.ToString();
+                }
             }
 
             sendStringMessageToClient(clientStream, buildResponse(resultCode == SDKError.NO_ERROR.ToString(), resultCode, dataToClient));
