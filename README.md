@@ -14,13 +14,19 @@
     -   a. Right-click on the DJIVideoParser project, select  **Properties**.
     -   b. Double check and follow the following settings:  **Configuration, Platform, Target Platform Version**  and  **Output Directory**.![VideoParserProject](https://devusa.djicdn.com/images/quick-start/WSDKDJIVideoParserConfig-7351ca195a.png)
 
+# Visual Studio Dependencies
+Make sure have those dependencies:
+- ![enter image description here](https://i.imgur.com/vSFMVIM.png)
+- ![enter image description here](https://i.imgur.com/1QCOcV6.png) 
+- Open "24S.sln" solution, if it ask for download additional dependency, install it.
+
 ## Build and start
-- Open 24S.sln solution
+With "24S.sln" solution opened:
+- In the package manager console execute "Update-Package -reinstall"
 - Make sure x64 debug is taken in both recompile
 ![enter image description here](https://i.ibb.co/xmM1SG7/image.png)
 - First recompile DJIVideoParser project
 ![enter image description here](https://i.ibb.co/wrbR0yS/image.png)
 - Second recompile 24S project
-![enter image description here](https://i.ibb.co/dfFswKb/image.png
-- In the package manager execute "Update-Package -reinstall"
+![enter image description here](https://i.ibb.co/dfFswKb/image.png)
 - Start :)
