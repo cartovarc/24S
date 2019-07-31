@@ -30,3 +30,7 @@ With "24S.sln" solution opened:
 - Second recompile 24S project
 ![enter image description here](https://i.ibb.co/dfFswKb/image.png)
 - Start :)
+
+## Useful commands:
+- CheckNetIsolation.exe LoopbackExempt -s
+- CheckNetIsolation.exe LoopbackExempt -is -n=com.rosas24s.integrator_p4yrhxa6ey1na
