@@ -1,0 +1,17 @@
+﻿<Page
+    x:Class="_24S.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:_24S"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <Grid x:Name="MainGrid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+            <Button Margin="0,5,0,0" Click="ExampleButtonClick">Example click button</Button>
+            <SwapChainPanel x:Name="swapChainPanel"/>
+        </Grid>
+    </Grid>
+</Page>
