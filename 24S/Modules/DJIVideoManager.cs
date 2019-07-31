@@ -136,5 +136,34 @@ namespace _24S
 
             }
         }
+
+        private async Task<SDKError> SetCameraModeToRecord()
+        {
+            SDKError err =  await SetCameraWorkMode(CameraWorkMode.RECORD_VIDEO);
+            return err;
+        }
+
+        private async Task<SDKError> SetCameraWorkMode(CameraWorkMode mode)
+        {
+            CameraWorkModeMsg workMode = new CameraWorkModeMsg
+            {
+                value = mode,
+            };
+            SDKError retCode = await DJISDKManager.Instance.ComponentManager.GetCameraHandler(0, 0).SetCameraWorkModeAsync(workMode);
+            return retCode;
+        }
+
+        private async Task<SDKError> StartRecordVideo()
+        {
+            SDKError retCode = await DJISDKManager.Instance.ComponentManager.GetCameraHandler(0, 0).StartRecordAsync();
+            return retCode;
+        }
+
+        private async Task<SDKError> StopRecordVideo()
+        {
+            SDKError retCode = await DJISDKManager.Instance.ComponentManager.GetCameraHandler(0, 0).StopRecordAsync();
+            return retCode;
+        }
+
     }
 }
