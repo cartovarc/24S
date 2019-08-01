@@ -91,6 +91,7 @@ namespace _24S
             {
                 videoParser.SetSurfaceAndVideoCallback(0, 0, null, null);
                 DJISDKManager.Instance.VideoFeeder.GetPrimaryVideoFeed(0).VideoDataUpdated -= OnVideoPush;
+                videoParser = null;
             }
         }
 

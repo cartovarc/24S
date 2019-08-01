@@ -62,5 +62,18 @@ namespace _24S
             System.Diagnostics.Debug.WriteLine("TEST CLICK");
         }
 
+        private async void StartVideoClick(object sender, RoutedEventArgs e)
+        {
+            DJIVideoManager.Instance.InitializeVideoFeedModule();
+            System.Diagnostics.Debug.WriteLine("START VIDEO CLICK");
+        }
+
+        private async void StopVideoClick(object sender, RoutedEventArgs e)
+        {
+            DJIVideoManager.Instance.UninitializeVideoFeedModule();
+            System.Diagnostics.Debug.WriteLine("STOP VIDEO CLICK");
+        }
+
+
     }
 }

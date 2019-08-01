@@ -10,8 +10,11 @@
 
     <Grid>
         <Grid x:Name="MainGrid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-            <Button Margin="0,5,0,0" Click="ExampleButtonClick">Example click button</Button>
             <SwapChainPanel x:Name="swapChainPanel"/>
+            <Button Margin="0,5,0,0" Click="ExampleButtonClick">Example click button</Button>
+            <Button Margin="0,5,0,0" Click="StartVideoClick">Start Video</Button>
+            <Button Margin="0,50,0,0" Click="StopVideoClick">Stop Video</Button>
+
         </Grid>
     </Grid>
 </Page>

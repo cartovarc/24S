@@ -58,7 +58,7 @@ namespace _24S
                         // Translate data bytes to a ASCII string.
                         data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
                         NotifySubscribers(stream, data);
-                        Debug.WriteLine("Received: {0}", data);
+                        //Debug.WriteLine("Received: {0}", data);
 
                         // Process the data sent by the client.
                         //data = data.ToUpper();

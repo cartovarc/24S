@@ -148,12 +148,14 @@ namespace _24S
             {
                 if (command.Equals("ROTATE_GIMBAL"))
                 {
+                    double factor = 10.0;
                     JObject infoCommand = (JObject)messageObject.SelectToken("COMMAND_INFO");
                     double pitch = (double)infoCommand.SelectToken("y");
                     double roll = 0.0; //(double)infoCommand.SelectToken("roll");
                     double yaw = (double)infoCommand.SelectToken("x");
-                    double duration = (double)infoCommand.SelectToken("duration");
-                    SDKError err = await DJIComponentManager.Instance.RotateGimbalByAngle(pitch, roll, yaw, duration);
+                    double duration = 1; //(double)infoCommand.SelectToken("duration");
+                    System.Diagnostics.Debug.WriteLine("mensaje");
+                    SDKError err = await DJIComponentManager.Instance.RotateGimbalByAngle(pitch * factor, roll * factor, yaw * factor, duration);
                     resultCode = err.ToString();
                 }
             }
