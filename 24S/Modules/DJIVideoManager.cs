@@ -16,6 +16,14 @@ namespace _24S
         SwapChainPanel swapChainPanel = null;
         private bool videoTest = false; //change to test video without aircraft
 
+        public delegate void VideoMissionRecordedEventHandler();
+        public event VideoMissionRecordedEventHandler MissionRecorded;
+
+        private DJIVideoManager()
+        {
+            DJISDKManager.Instance.WaypointMissionManager.GetWaypointMissionHandler(0).ExecutionStateChanged += StartStopMissionVideoRecord;
+        }
+
         public void setSwapChainPanel(SwapChainPanel swapChainPanel)
         {
             this.swapChainPanel = swapChainPanel;
@@ -163,6 +171,30 @@ namespace _24S
         {
             SDKError retCode = await DJISDKManager.Instance.ComponentManager.GetCameraHandler(0, 0).StopRecordAsync();
             return retCode;
+        }
+
+        private async void StartStopMissionVideoRecord(object sender, WaypointMissionExecutionState? value)
+        {
+            if (value.Value.state == WaypointMissionExecuteState.INITIALIZING)
+            {
+                await SetCameraModeToRecord();
+                await StartRecordVideo();
+            }
+            else if (value.Value.isExecutionFinish)
+            {
+                SDKError err = await StopRecordVideo();
+
+                if(err == SDKError.NO_ERROR)
+                {
+                    OnVideoMissionRecorded();
+                }
+                
+            }
+        }
+
+        private void OnVideoMissionRecorded()
+        {
+            MissionRecorded?.Invoke();
         }
 
     }

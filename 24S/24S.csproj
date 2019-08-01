@@ -121,12 +121,14 @@
     </Compile>
     <Compile Include="Modules\DJIComponentManager.cs" />
     <Compile Include="Modules\DJIMissionManager.cs" />
+    <Compile Include="Modules\DJIPlayBackManager.cs" />
     <Compile Include="Modules\DJIVideoManager.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Modules\MessageManager.cs" />
     <Compile Include="Modules\SocketServer.cs" />
+    <Compile Include="Modules\TaskModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

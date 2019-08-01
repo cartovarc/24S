@@ -25,6 +25,7 @@
   <Capabilities>
     <Capability Name="internetClient" />
     <Capability Name="internetClientServer" />
+    <uap:Capability Name="videosLibrary" />
     <DeviceCapability Name="serialcommunication">
       <Device Id="vidpid:2ca3 001f">
         <Function Type="name:serialPort" />
