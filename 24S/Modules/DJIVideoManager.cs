@@ -4,6 +4,8 @@ using Windows.UI.Xaml.Controls;
 using DJI.WindowsSDK;
 using DJIVideoParser;
 using System.Threading.Tasks;
+using System.Threading;
+using System.Collections;
 
 namespace _24S
 {
@@ -18,6 +20,8 @@ namespace _24S
 
         public delegate void VideoMissionRecordedEventHandler();
         public event VideoMissionRecordedEventHandler MissionRecorded;
+
+        private OrderTaskScheduler _scheduler_video = new OrderTaskScheduler("scheduler_video");
 
         private DJIVideoManager()
         {
@@ -101,6 +105,25 @@ namespace _24S
             videoParser.PushVideoData(0, 0, bytes, bytes.Length);
         }
 
+        public Task sendVideoToClientInOrder(byte[] data, int width, int height)
+        {
+            return Task.Factory.StartNew(
+                () => {
+                    try
+                    {
+                        videoClient.Write(data, 0, data.Length); // send bytes to the client
+                    }
+                    catch (System.IO.IOException e)
+                    {
+                        videoClient = null; //restart unique consumer
+                    }
+                },
+                CancellationToken.None,
+                TaskCreationOptions.None,
+                this._scheduler_video);
+        }
+
+
         //Decode data. Do nothing here. This function would return a bytes array with image data in RGBA format.
         async void ReceiveDecodedData(byte[] data, int width, int height)
         {
@@ -110,18 +133,7 @@ namespace _24S
             if (videoClient != null)
             {
                 //System.Diagnostics.Debug.WriteLine("tamano: {0} {1} {2}", width, height, data.Length);
-                try
-                {
-                    await Task.Run(() => {
-                        videoClient.Write(data, 0, data.Length); // send bytes to the client
-                    });
-
-                }
-                catch (System.IO.IOException)
-                {
-                    videoClient = null; //restart unique consumer
-                }
-
+                sendVideoToClientInOrder(data, width, height);
             }
         }
 

@@ -127,6 +127,7 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Modules\MessageManager.cs" />
+    <Compile Include="Modules\SchedulerTask.cs" />
     <Compile Include="Modules\SocketServer.cs" />
     <Compile Include="Modules\TaskModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

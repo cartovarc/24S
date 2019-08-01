@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace _24S
 {
@@ -50,28 +51,10 @@ namespace _24S
                     // Get a stream object for reading and writing
                     NetworkStream stream = client.GetStream();
 
-                    int i;
+                    Task
+                        .Factory
+                        .StartNew(() => doSomething(stream, bytes, data));
 
-                    // Loop to receive all the data sent by the client.
-                    while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
-                    {
-                        // Translate data bytes to a ASCII string.
-                        data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
-                        NotifySubscribers(stream, data);
-                        //Debug.WriteLine("Received: {0}", data);
-
-                        // Process the data sent by the client.
-                        //data = data.ToUpper();
-
-                        //byte[] msg = System.Text.Encoding.ASCII.GetBytes(data);
-
-                        // Send back a response.
-                        //stream.Write(msg, 0, msg.Length);
-                        //Debug.WriteLine("Sent: {0}", data);
-                    }
-
-                    // Shutdown and end connection
-                    //client.Close();
                 }
             }
             catch (SocketException e)
@@ -93,6 +76,36 @@ namespace _24S
         private void OnDataReceived(Stream clientStream, String message)
         {
             DataReceived?.Invoke(clientStream, message);
+        }
+
+        private async void doSomething(Stream stream, Byte[] bytes, String data)
+        {
+            try
+            {
+                int i;
+                // Loop to receive all the data sent by the client.
+                while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
+                {
+                    // Translate data bytes to a ASCII string.
+                    data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
+                    NotifySubscribers(stream, data);
+                    //Debug.WriteLine("Received: {0}", data);
+
+                    // Process the data sent by the client.
+                    //data = data.ToUpper();
+
+                    //byte[] msg = System.Text.Encoding.ASCII.GetBytes(data);
+
+                    // Send back a response.
+                    //stream.Write(msg, 0, msg.Length);
+                    //Debug.WriteLine("Sent: {0}", data);
+                }
+            }
+            catch (System.IO.IOException e)
+            {
+                // Shutdown and end connection
+                //client.Close();
+            }
         }
     }
 }
