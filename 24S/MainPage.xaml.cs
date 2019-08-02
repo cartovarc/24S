@@ -29,6 +29,11 @@ namespace _24S
             {
                 System.Diagnostics.Debug.WriteLine("Register app successfully.");
 
+                if (DJIVideoManager.Instance.videoTest)
+                {
+                    DJIVideoManager.Instance.InitializeVideoFeedModule();
+                }
+
                 //The product connection state will be updated when it changes here.
                 DJISDKManager.Instance.ComponentManager.GetProductHandler(0).ProductTypeChanged += async delegate (object sender, ProductTypeMsg? value)
                 {

@@ -9,14 +9,14 @@ using System.Collections;
 
 namespace _24S
 {
-    class DJIVideoManager : Page
+    class DJIVideoManager
     {
         public static DJIVideoManager Instance { get; } = new DJIVideoManager(); // Singleton
 
         private DJIVideoParser.Parser videoParser; //use videoParser to decode raw data.
         public Stream videoClient { get; set; } = null; // stream for client of video
         SwapChainPanel swapChainPanel = null;
-        private bool videoTest = false; //change to test video without aircraft
+        public bool videoTest { get; } = false; //change to test video without aircraft
 
         public delegate void VideoMissionRecordedEventHandler();
         public event VideoMissionRecordedEventHandler MissionRecorded;
@@ -26,7 +26,6 @@ namespace _24S
         private DJIVideoManager()
         {
             DJISDKManager.Instance.ComponentManager.GetFlightControllerHandler(0, 0).AutoRTHReasonChanged += OnExecutionFinish;
-            //DJISDKManager.Instance.WaypointMissionManager.GetWaypointMissionHandler(0).ExecutionStateChanged += OnExecutionFinish;
             //DJISDKManager.Instance.WaypointMissionManager.GetWaypointMissionHandler(0).ExecutionStateChanged += StartStopMissionVideoRecord;
         }
 
@@ -67,28 +66,31 @@ namespace _24S
                 return;
             }
 
-            //Must in UI Thread
-
-            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
-            {
-                //Raw data and decoded data listener
-                if (videoParser == null)
-                {
-                    videoParser = new DJIVideoParser.Parser();
-                    videoParser.Initialize(delegate (byte[] data)
+            //Must in Thread
+            await Task
+                .Factory
+                .StartNew(async () =>
                     {
-                        //Note: This function must be called because we need DJI Windows SDK to help us to parse frame data.
-                        return DJISDKManager.Instance.VideoFeeder.ParseAssitantDecodingInfo(0, data);
-                    });
-                    //Set the swapChainPanel to display and set the decoded data callback.
-                    videoParser.SetSurfaceAndVideoCallback(0, 0, swapChainPanel, ReceiveDecodedData);
-                    DJISDKManager.Instance.VideoFeeder.GetPrimaryVideoFeed(0).VideoDataUpdated += OnVideoPush;
-                }
-                //get the camera type and observe the CameraTypeChanged event.
-                DJISDKManager.Instance.ComponentManager.GetCameraHandler(0, 0).CameraTypeChanged += OnCameraTypeChanged;
-                var type = await DJISDKManager.Instance.ComponentManager.GetCameraHandler(0, 0).GetCameraTypeAsync();
-                OnCameraTypeChanged(this, type.value);
-            });
+                        //Raw data and decoded data listener
+                        if (videoParser == null)
+                        {
+                            videoParser = new DJIVideoParser.Parser();
+                            videoParser.Initialize(delegate (byte[] data)
+                            {
+                                //Note: This function must be called because we need DJI Windows SDK to help us to parse frame data.
+                                return DJISDKManager.Instance.VideoFeeder.ParseAssitantDecodingInfo(0, data);
+                            });
+                            //Set the swapChainPanel to display and set the decoded data callback.
+                            videoParser.SetSurfaceAndVideoCallback(0, 0, swapChainPanel, ReceiveDecodedData);
+                            DJISDKManager.Instance.VideoFeeder.GetPrimaryVideoFeed(0).VideoDataUpdated += OnVideoPush;
+                        }
+                        //get the camera type and observe the CameraTypeChanged event.
+                        DJISDKManager.Instance.ComponentManager.GetCameraHandler(0, 0).CameraTypeChanged += OnCameraTypeChanged;
+                        var type = await DJISDKManager.Instance.ComponentManager.GetCameraHandler(0, 0).GetCameraTypeAsync();
+                        OnCameraTypeChanged(this, type.value);
+                    }
+                );
+
         }
 
         public void UninitializeVideoFeedModule()
@@ -210,7 +212,7 @@ namespace _24S
             }
         }
 
-        private async void OnExecutionFinish(object sender, FCAutoRTHReasonMsg? value)
+        private void OnExecutionFinish(object sender, FCAutoRTHReasonMsg? value)
         {
             if (value != null)
             {

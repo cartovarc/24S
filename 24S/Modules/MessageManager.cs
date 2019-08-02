@@ -160,6 +160,10 @@ namespace _24S
                     resultCode = err.ToString();
                 }
             }
+            else if (commandTpye.Equals("VIRTUAL_CONTROLLER"))
+            {
+                //TODO
+            }
 
             sendStringMessageToClient(clientStream, buildResponse(resultCode == SDKError.NO_ERROR.ToString(), resultCode, dataToClient));
 
