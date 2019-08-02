@@ -119,6 +119,20 @@ namespace _24S
             });
         }
 
+        public async Task<bool> AircraftConnected()
+        {
+            //If you want to get the latest product connection state manually, you can use the following code
+            var productType = (await DJISDKManager.Instance.ComponentManager.GetProductHandler(0).GetProductTypeAsync()).value;
+            if (productType != null && productType?.value != ProductType.UNRECOGNIZED)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public async Task<SDKError> SetPrecisionLanding(bool value)
         {
             SDKError errSetPrecisionLanding = await DJISDKManager.Instance.ComponentManager.GetFlightAssistantHandler(0, 0).SetPrecisionLandingEnabledAsync(new BoolMsg() { value = value });

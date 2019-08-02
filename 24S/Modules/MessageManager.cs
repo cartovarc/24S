@@ -25,14 +25,13 @@ namespace _24S
 
         }
 
-        private string buildResponse(bool success, string resultCode, string data)
+        private string buildResponse(bool success, string resultCode, JObject data)
         {
             dynamic jsonObject = new JObject();
             jsonObject.success = success;
             jsonObject.resultCode = resultCode == null ? "NULL" : resultCode; ;
-            jsonObject.data = data == null ? "NULL" : data; ;
+            jsonObject.data = data == null ? new JObject() : data;
             String jsonString = JsonConvert.SerializeObject(jsonObject);
-
             return jsonString;
         }
 
@@ -62,7 +61,8 @@ namespace _24S
             string command = (string)messageObject.SelectToken("COMMAND");
             string commandTpye = (string)messageObject.SelectToken("COMMAND_TYPE");
 
-            string resultCode = null, dataToClient = null;
+            string resultCode = null;
+            JObject dataToClient = null;
 
             if (commandTpye.Equals("MISSION"))
             {
@@ -96,23 +96,24 @@ namespace _24S
                 else if (command.Equals("GET_MISSION_STATE"))
                 {
                     resultCode = SDKError.NO_ERROR.ToString();
-                    dataToClient = DJIMissionManager.Instance.WaypointMissionCurrentState();
+                    dynamic jsonObject = new JObject();
+                    jsonObject.MISSION_STATE = DJIMissionManager.Instance.WaypointMissionCurrentState(); //make an object
+                    dataToClient = jsonObject;
                 }
             }
             else if (commandTpye.Equals("TELEMETRY"))
             {
                 if (command.Equals("GET_LOCATION"))
                 {
-                    if (DJIComponentManager.Instance.AircraftConnection)
+                    if (await DJIComponentManager.Instance.AircraftConnected())
                     {
                         dynamic jsonObject = new JObject();
                         jsonObject.latitude = DJIComponentManager.Instance.AircraftLocation.latitude;
                         jsonObject.longitude = DJIComponentManager.Instance.AircraftLocation.longitude;
                         jsonObject.altitude = DJIComponentManager.Instance.AircraftAltitude;
-                        String jsonString = JsonConvert.SerializeObject(jsonObject);
-
+                        //String jsonString = JsonConvert.SerializeObject(jsonObject);
                         resultCode = SDKError.NO_ERROR.ToString();
-                        dataToClient = jsonString;
+                        dataToClient = jsonObject;
                     }
                     else
                     {

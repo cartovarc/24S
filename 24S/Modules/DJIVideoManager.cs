@@ -212,8 +212,12 @@ namespace _24S
 
         private async void OnExecutionFinish(object sender, FCAutoRTHReasonMsg? value)
         {
-            System.Diagnostics.Debug.WriteLine("RTH STATE: {0}", value.Value.value);
-            if (value.Value.value == FCAutoRTHReason.GOHOME_FINISH)
+            if (value != null)
+            {
+                System.Diagnostics.Debug.WriteLine("RTH STATE: {0}", value.Value.value);
+            }
+            
+            if (value != null && value.Value.value == FCAutoRTHReason.GOHOME_FINISH)
             {
                 //TODO: Send stop video request
                 videoClient = null; // close connection with video client
