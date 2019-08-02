@@ -25,7 +25,9 @@ namespace _24S
 
         private DJIVideoManager()
         {
-            DJISDKManager.Instance.WaypointMissionManager.GetWaypointMissionHandler(0).ExecutionStateChanged += StartStopMissionVideoRecord;
+            DJISDKManager.Instance.ComponentManager.GetFlightControllerHandler(0, 0).AutoRTHReasonChanged += OnExecutionFinish;
+            //DJISDKManager.Instance.WaypointMissionManager.GetWaypointMissionHandler(0).ExecutionStateChanged += OnExecutionFinish;
+            //DJISDKManager.Instance.WaypointMissionManager.GetWaypointMissionHandler(0).ExecutionStateChanged += StartStopMissionVideoRecord;
         }
 
         public void setSwapChainPanel(SwapChainPanel swapChainPanel)
@@ -111,7 +113,10 @@ namespace _24S
                 () => {
                     try
                     {
-                        videoClient.Write(data, 0, data.Length); // send bytes to the client
+                        if (videoClient != null)
+                        {
+                            videoClient.Write(data, 0, data.Length); // send bytes to the client
+                        }
                     }
                     catch (System.IO.IOException e)
                     {
@@ -204,6 +209,18 @@ namespace _24S
                 
             }
         }
+
+        private async void OnExecutionFinish(object sender, FCAutoRTHReasonMsg? value)
+        {
+            System.Diagnostics.Debug.WriteLine("RTH STATE: {0}", value.Value.value);
+            if (value.Value.value == FCAutoRTHReason.GOHOME_FINISH)
+            {
+                //TODO: Send stop video request
+                videoClient = null; // close connection with video client
+                System.Diagnostics.Debug.WriteLine("STOP VIDEO CLIENT");
+            }
+        }
+
 
         private void OnVideoMissionRecorded()
         {

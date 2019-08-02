@@ -40,6 +40,7 @@ namespace _24S
 
                             DJIVideoManager.Instance.setSwapChainPanel(swapChainPanel);
                             DJIVideoManager.Instance.InitializeVideoFeedModule(); //Initialize video streaming when aircraft is connected
+                            DJISDKManager.Instance.ComponentManager.GetFlightAssistantHandler(0, 0).SetVisionAssistedPositioningEnabledAsync(new BoolMsg() { value = true});
                         }
                         else
                         {

@@ -148,7 +148,7 @@ namespace _24S
             {
                 if (command.Equals("ROTATE_GIMBAL"))
                 {
-                    double factor = 10.0;
+                    double factor = 15.0;
                     JObject infoCommand = (JObject)messageObject.SelectToken("COMMAND_INFO");
                     double pitch = (double)infoCommand.SelectToken("y");
                     double roll = 0.0; //(double)infoCommand.SelectToken("roll");

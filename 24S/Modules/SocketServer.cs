@@ -53,7 +53,7 @@ namespace _24S
 
                     Task
                         .Factory
-                        .StartNew(() => doSomething(stream, bytes, data));
+                        .StartNew(() => clientCommunicationThread(stream, bytes, data));
 
                 }
             }
@@ -78,7 +78,7 @@ namespace _24S
             DataReceived?.Invoke(clientStream, message);
         }
 
-        private async void doSomething(Stream stream, Byte[] bytes, String data)
+        private async void clientCommunicationThread(Stream stream, Byte[] bytes, String data)
         {
             try
             {
