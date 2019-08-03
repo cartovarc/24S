@@ -107,6 +107,7 @@ namespace _24S
             videoParser.PushVideoData(0, 0, bytes, bytes.Length);
         }
 
+        private int countFrame = 0;
         public Task sendVideoToClientInOrder(byte[] data, int width, int height)
         {
             return Task.Factory.StartNew(
@@ -115,7 +116,11 @@ namespace _24S
                     {
                         if (videoClient != null)
                         {
-                            videoClient.Write(data, 0, data.Length); // send bytes to the client
+                            if (countFrame % 2 == 0)
+                            {
+                                videoClient.Write(data, 0, data.Length); // send bytes to the client
+                            }
+                            countFrame++;
                         }
                     }
                     catch (System.IO.IOException e)
