@@ -9,7 +9,7 @@ using System.Collections;
 
 namespace _24S
 {
-    class DJIVideoManager
+    class DJIVideoManager : Page
     {
         public static DJIVideoManager Instance { get; } = new DJIVideoManager(); // Singleton
 
@@ -39,8 +39,10 @@ namespace _24S
             if (videoTest)
             {
                 var t = Task.Run(() => {
+                    int count = 0;
                     while (true)
                     {
+                        Thread.Sleep(20);
                         int width = 500;
                         int height = 500;
                         byte[] pixelData = new byte[4 * width * height];
@@ -58,6 +60,8 @@ namespace _24S
                             }
 
                         ReceiveDecodedData(pixelData, width, height);
+                        System.Diagnostics.Debug.WriteLine(count);
+                        count++;
 
                         if (videoParser != null) break;
                     }
@@ -67,29 +71,26 @@ namespace _24S
             }
 
             //Must in Thread
-            await Task
-                .Factory
-                .StartNew(async () =>
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+            {
+                //Raw data and decoded data listener
+                if (videoParser == null)
+                {
+                    videoParser = new DJIVideoParser.Parser();
+                    videoParser.Initialize(delegate (byte[] data)
                     {
-                        //Raw data and decoded data listener
-                        if (videoParser == null)
-                        {
-                            videoParser = new DJIVideoParser.Parser();
-                            videoParser.Initialize(delegate (byte[] data)
-                            {
                                 //Note: This function must be called because we need DJI Windows SDK to help us to parse frame data.
                                 return DJISDKManager.Instance.VideoFeeder.ParseAssitantDecodingInfo(0, data);
-                            });
-                            //Set the swapChainPanel to display and set the decoded data callback.
-                            videoParser.SetSurfaceAndVideoCallback(0, 0, swapChainPanel, ReceiveDecodedData);
-                            DJISDKManager.Instance.VideoFeeder.GetPrimaryVideoFeed(0).VideoDataUpdated += OnVideoPush;
-                        }
-                        //get the camera type and observe the CameraTypeChanged event.
-                        DJISDKManager.Instance.ComponentManager.GetCameraHandler(0, 0).CameraTypeChanged += OnCameraTypeChanged;
-                        var type = await DJISDKManager.Instance.ComponentManager.GetCameraHandler(0, 0).GetCameraTypeAsync();
-                        OnCameraTypeChanged(this, type.value);
-                    }
-                );
+                    });
+                    //Set the swapChainPanel to display and set the decoded data callback.
+                    videoParser.SetSurfaceAndVideoCallback(0, 0, swapChainPanel, ReceiveDecodedData);
+                    DJISDKManager.Instance.VideoFeeder.GetPrimaryVideoFeed(0).VideoDataUpdated += OnVideoPush;
+                }
+                //get the camera type and observe the CameraTypeChanged event.
+                DJISDKManager.Instance.ComponentManager.GetCameraHandler(0, 0).CameraTypeChanged += OnCameraTypeChanged;
+                var type = await DJISDKManager.Instance.ComponentManager.GetCameraHandler(0, 0).GetCameraTypeAsync();
+                OnCameraTypeChanged(this, type.value);
+            });
 
         }
 
@@ -212,7 +213,7 @@ namespace _24S
             }
         }
 
-        private void OnExecutionFinish(object sender, FCAutoRTHReasonMsg? value)
+        private async void OnExecutionFinish(object sender, FCAutoRTHReasonMsg? value)
         {
             if (value != null)
             {
