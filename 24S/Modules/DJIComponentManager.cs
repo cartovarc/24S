@@ -67,12 +67,29 @@ namespace _24S
             }
         }
 
+        private double _aircraftVelocity = 0.0;
+        public double AircraftVelocity
+        {
+            get
+            {
+                return _aircraftVelocity;
+            }
+            set
+            {
+                _aircraftVelocity = value;
+            }
+        }
+
+
+
         private DJIComponentManager()
         {
             DJISDKManager.Instance.ComponentManager.GetFlightControllerHandler(0, 0).AircraftLocationChanged += AircraftLocationChanged;
             DJISDKManager.Instance.ComponentManager.GetFlightControllerHandler(0, 0).AltitudeChanged += AircraftAltitudeChanged;
             DJISDKManager.Instance.ComponentManager.GetBatteryHandler(0, 0).ChargeRemainingInPercentChanged += AircraftBatteryPercentChanged;
             DJISDKManager.Instance.ComponentManager.GetProductHandler(0).ConnectionChanged += AircraftConnectionChanged;
+            DJISDKManager.Instance.ComponentManager.GetFlightControllerHandler(0, 0).VelocityChanged += AircraftVelocityChanged;
+
         }
 
         private async void AircraftLocationChanged(object sender, LocationCoordinate2D? value)
@@ -115,6 +132,20 @@ namespace _24S
                 if (value.HasValue)
                 {
                     AircraftConnection = value.Value.value;
+                }
+            });
+        }
+
+        private async void AircraftVelocityChanged(object sender, Velocity3D? value)
+        {
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                if (value.HasValue)
+                {
+                    double x = value.Value.x;
+                    double y = value.Value.y;
+                    double z = value.Value.z;
+                    AircraftVelocity = Math.Sqrt(x*x + y*y + z*z);
                 }
             });
         }

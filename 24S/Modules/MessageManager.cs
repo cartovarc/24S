@@ -101,9 +101,9 @@ namespace _24S
                     dataToClient = jsonObject;
                 }
             }
-            else if (commandTpye.Equals("TELEMETRY"))
+            else if (commandTpye.Equals("AIRCRAFT_INFORMATION"))
             {
-                if (command.Equals("GET_LOCATION"))
+                if (command.Equals("GET_ALL"))
                 {
                     if (await DJIComponentManager.Instance.AircraftConnected())
                     {
@@ -111,6 +111,9 @@ namespace _24S
                         jsonObject.latitude = DJIComponentManager.Instance.AircraftLocation.latitude;
                         jsonObject.longitude = DJIComponentManager.Instance.AircraftLocation.longitude;
                         jsonObject.altitude = DJIComponentManager.Instance.AircraftAltitude;
+                        jsonObject.battery = DJIComponentManager.Instance.AircraftBattery;
+                        jsonObject.velocity = DJIComponentManager.Instance.AircraftVelocity;
+                        //jsonObject.connection = DJIComponentManager.Instance.AircraftConnection;
                         //String jsonString = JsonConvert.SerializeObject(jsonObject);
                         resultCode = SDKError.NO_ERROR.ToString();
                         dataToClient = jsonObject;
