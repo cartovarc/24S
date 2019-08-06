@@ -10,35 +10,40 @@ namespace _24S
     {
         public static DJIMissionManager Instance { get; } = new DJIMissionManager(); // Singleton
 
-        private static Waypoint InitWaypoint(double latitude, double longitude, double altitude, double gimbalPitch, double speed, int stayTimeMinutes, int rotation)
+        private static Waypoint InitWaypoint(double latitude, double longitude, double altitude, double gimbalPitch, double speed, int stayTimeSeconds, int rotation)
         {
             Waypoint waypoint = new Waypoint()
             {
                 location = new LocationCoordinate2D() { latitude = latitude, longitude = longitude },
                 altitude = altitude,
-                gimbalPitch = 0,
+                gimbalPitch = gimbalPitch,
                 turnMode = WaypointTurnMode.CLOCKWISE,
                 heading = 0,
                 actionRepeatTimes = 1,
                 actionTimeoutInSeconds = 60,
                 cornerRadiusInMeters = 0.2,
-                speed = 5,
+                speed = speed,
                 shootPhotoTimeInterval = -1,
                 shootPhotoDistanceInterval = -1,
                 waypointActions = new List<WaypointAction>()
                 {
-                    //new WaypointAction(){actionType = WaypointActionType.STAY, actionParam = 0},
-                    //new WaypointAction(){actionType = WaypointActionType.ROTATE_AIRCRAFT, actionParam = rotation},
+                    new WaypointAction(){actionType = WaypointActionType.STAY, actionParam = stayTimeSeconds*1000 },
+                    new WaypointAction(){actionType = WaypointActionType.ROTATE_AIRCRAFT, actionParam = rotation},
                 }
             };
             return waypoint;
         }
 
 
-        public SDKError LoadMission(String json_mision)
+        public SDKError LoadMission(String json_mission)
         {
+            JObject missionData = JObject.Parse(json_mission);
+            JArray points = (JArray) missionData.SelectToken("puntos_mision");
 
-            JArray points = JArray.Parse(json_mision);
+            JObject firstPoint = (JObject) missionData.SelectToken("punto_inicial");
+            double firstPointLatitude = (double) firstPoint.SelectToken("latitud");
+            double firstPointLongitude = (double) firstPoint.SelectToken("longitud");
+            double firstPointAltitude = (double) missionData.SelectToken("altitud");
 
             int waypointCount = points.Count;
             double maxFlightSpeed = 15; // meters per second TODO
@@ -47,28 +52,41 @@ namespace _24S
 
             List<Waypoint> waypoints = new List<Waypoint>(waypointCount);
 
+            double goFirstPointSpeed = 5;
+            waypoints.Add(InitWaypoint(firstPointLatitude, firstPointLongitude, firstPointAltitude, 0, goFirstPointSpeed, 0, 0));
+
             foreach (JObject point in points)
             {
-                JObject coord = (JObject)point.SelectToken("coord");
-                JArray coordinates = (JArray)coord.SelectToken("coordinates");
-                double latitude = (double)coordinates.First[0];
-                double longitude = (double)coordinates.First[1];
+                double latitude = (double)point.SelectToken("latitud");
+                double longitude = (double)point.SelectToken("longitud");
                 double gimbalPitch = (double)point.SelectToken("angulo");
                 double speed = (double)point.SelectToken("velocidad"); // meters per second
-                double altitude = (double)point.SelectToken("altura");
+                double altitude = (double)point.SelectToken("altitud");
                 int stayTime = (int)point.SelectToken("tiempo");
                 int rotation = (int)point.SelectToken("rotacion");
                 waypoints.Add(InitWaypoint(latitude, longitude, altitude, gimbalPitch, speed, stayTime, rotation));
-                System.Diagnostics.Debug.WriteLine("lat {0}, lng {1})", latitude, longitude);
             }
 
+            double nowLat = DJIComponentManager.Instance.AircraftLocation.latitude;
+            double nowLng = DJIComponentManager.Instance.AircraftLocation.longitude;
+            double goOverFirstPointSpeed = 15;
+            double overFirstPointAltitude = 48;
+            double landingSpeed = 2; // m per s
+            double returnToHomeGimbalAngle = -90;
+
+            //last waypoints
+            waypoints.Add(InitWaypoint(firstPointLatitude, firstPointLongitude, overFirstPointAltitude, returnToHomeGimbalAngle, goOverFirstPointSpeed, 0, 0));
+            waypoints.Add(InitWaypoint(firstPointLatitude, firstPointLongitude, firstPointAltitude, returnToHomeGimbalAngle, landingSpeed, 0, 0));
+            waypoints.Add(InitWaypoint(nowLat, nowLng, firstPointAltitude, returnToHomeGimbalAngle, landingSpeed, 0, 0));
+
+            waypointCount += 4; //additional waypoints
 
             WaypointMission mission = new WaypointMission()
             {
-                waypointCount = points.Count,
+                waypointCount = waypointCount,
                 maxFlightSpeed = maxFlightSpeed,
                 autoFlightSpeed = autoFlightSpeed,
-                finishedAction = WaypointMissionFinishedAction.GO_HOME,
+                finishedAction = WaypointMissionFinishedAction.AUTO_LAND,
                 headingMode = WaypointMissionHeadingMode.AUTO,
                 flightPathMode = WaypointMissionFlightPathMode.NORMAL,
                 gotoFirstWaypointMode = WaypointMissionGotoFirstWaypointMode.SAFELY,
