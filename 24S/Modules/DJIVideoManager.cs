@@ -25,8 +25,7 @@ namespace _24S
 
         private DJIVideoManager()
         {
-            DJISDKManager.Instance.ComponentManager.GetFlightControllerHandler(0, 0).AutoRTHReasonChanged += OnExecutionFinish;
-            //DJISDKManager.Instance.WaypointMissionManager.GetWaypointMissionHandler(0).ExecutionStateChanged += OnExecutionFinish;
+            DJISDKManager.Instance.WaypointMissionManager.GetWaypointMissionHandler(0).StateChanged += OnExecutionFinish;
             //DJISDKManager.Instance.WaypointMissionManager.GetWaypointMissionHandler(0).ExecutionStateChanged += StartStopMissionVideoRecord;
         }
 
@@ -215,14 +214,10 @@ namespace _24S
             }
         }
 
-        private async void OnExecutionFinish(object sender, FCAutoRTHReasonMsg? value)
+        private async void OnExecutionFinish(object sender, WaypointMissionStateTransition? value)
         {
-            if (value != null)
-            {
-                System.Diagnostics.Debug.WriteLine("RTH STATE: {0}", value.Value.value);
-            }
-            
-            if (value != null && value.Value.value == FCAutoRTHReason.GOHOME_FINISH)
+
+            if (value != null && value.Value.previous == WaypointMissionState.EXECUTING && value.Value.current == WaypointMissionState.READY_TO_UPLOAD)
             {
                 //TODO: Send stop video request
                 videoClient = null; // close connection with video client
