@@ -163,6 +163,19 @@ namespace _24S
                     resultCode = err.ToString();
                 }
             }
+            else if (commandTpye.Equals("VIRTUAL_REMOTE_CONTROLLER"))
+            {
+                if (command.Equals("UPDATE_JOYSTICK_VALUE"))
+                {
+                    JObject infoCommand = (JObject)messageObject.SelectToken("COMMAND_INFO");
+                    float pitch = (float)infoCommand.SelectToken("PITCH");
+                    float roll = (float)infoCommand.SelectToken("ROLL");
+                    float yaw = (float)infoCommand.SelectToken("YAW");
+                    float throttle = (float)infoCommand.SelectToken("THROTTLE");
+                    DJIVirtualRemoteController.Instance.UpdateJoystickValue(pitch, roll, yaw, throttle);
+                    resultCode = SDKError.NO_ERROR.ToString();//TODO
+                }
+            }
 
             sendStringMessageToClient(clientStream, buildResponse(resultCode == SDKError.NO_ERROR.ToString(), resultCode, dataToClient));
 
