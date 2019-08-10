@@ -63,5 +63,11 @@ namespace _24S
             SDKError err = await DJISDKManager.Instance.ComponentManager.GetFlightControllerHandler(0, 0).StartTakeoffAsync();
             System.Diagnostics.Debug.WriteLine("TAKE OFF: %s", err.ToString());
         }
+
+        private async void EnableGSMClick(object sender, RoutedEventArgs e)
+        {
+            SDKError err = await DJISDKManager.Instance.ComponentManager.GetFlightControllerHandler(0, 0).SetGroundStationModeEnabledAsync(new BoolMsg() { value = true });
+            System.Diagnostics.Debug.WriteLine("TAKE OFF: %s", err.ToString());
+        }
     }
 }

@@ -38,6 +38,7 @@ namespace _24S
         public SDKError LoadMission(String json_mission)
         {
             JObject missionData = JObject.Parse(json_mission);
+            string landingType = (string) missionData.SelectToken("metodo_aterrizaje");
             JArray points = (JArray) missionData.SelectToken("puntos_mision");
 
             JObject firstPoint = (JObject) missionData.SelectToken("punto_inicial");
@@ -52,8 +53,12 @@ namespace _24S
 
             List<Waypoint> waypoints = new List<Waypoint>(waypointCount);
 
-            double goFirstPointSpeed = 5;
-            waypoints.Add(InitWaypoint(firstPointLatitude, firstPointLongitude, firstPointAltitude, 0, goFirstPointSpeed, 0, 0));
+            // TODO use class to retrieve constants
+            if (landingType.Equals("USE_PL_ARAS"))
+            {
+                double goFirstPointSpeed = 5;
+                waypoints.Add(InitWaypoint(firstPointLatitude, firstPointLongitude, firstPointAltitude, 0, goFirstPointSpeed, 0, 0));
+            }
 
             foreach (JObject point in points)
             {
@@ -74,19 +79,22 @@ namespace _24S
             double landingSpeed = 2; // m per s
             double returnToHomeGimbalAngle = -90;
 
-            //last waypoints
-            waypoints.Add(InitWaypoint(firstPointLatitude, firstPointLongitude, overFirstPointAltitude, returnToHomeGimbalAngle, goOverFirstPointSpeed, 0, 0));
-            waypoints.Add(InitWaypoint(firstPointLatitude, firstPointLongitude, firstPointAltitude, returnToHomeGimbalAngle, landingSpeed, 0, 0));
-            waypoints.Add(InitWaypoint(nowLat, nowLng, firstPointAltitude, returnToHomeGimbalAngle, landingSpeed, 0, 0));
-
-            waypointCount += 4; //additional waypoints
+            // TODO use class to retrieve constants
+            if (landingType.Equals("USE_PL_ARAS"))
+            {
+                //last waypoints
+                waypoints.Add(InitWaypoint(firstPointLatitude, firstPointLongitude, overFirstPointAltitude, returnToHomeGimbalAngle, goOverFirstPointSpeed, 0, 0));
+                waypoints.Add(InitWaypoint(firstPointLatitude, firstPointLongitude, firstPointAltitude, returnToHomeGimbalAngle, landingSpeed, 0, 0));
+                waypoints.Add(InitWaypoint(nowLat, nowLng, firstPointAltitude, returnToHomeGimbalAngle, landingSpeed, 0, 0));
+                waypointCount += 4; //additional waypoints
+            }
 
             WaypointMission mission = new WaypointMission()
             {
                 waypointCount = waypointCount,
                 maxFlightSpeed = maxFlightSpeed,
                 autoFlightSpeed = autoFlightSpeed,
-                finishedAction = WaypointMissionFinishedAction.AUTO_LAND,
+                finishedAction = landingType.Equals("USE_PL_ARAS") ? WaypointMissionFinishedAction.AUTO_LAND : WaypointMissionFinishedAction.GO_HOME,
                 headingMode = WaypointMissionHeadingMode.AUTO,
                 flightPathMode = WaypointMissionFlightPathMode.NORMAL,
                 gotoFirstWaypointMode = WaypointMissionGotoFirstWaypointMode.SAFELY,
@@ -139,6 +147,13 @@ namespace _24S
             return errResumeMission;
         }
 
+        public async Task<SDKError> StopMission()
+        {
+            SDKError errStopMission = await DJISDKManager.Instance.WaypointMissionManager.GetWaypointMissionHandler(0).StopMission();
+            System.Diagnostics.Debug.WriteLine("STOP MISSION: " + errStopMission.ToString());
+
+            return errStopMission;
+        }
         public string WaypointMissionCurrentState()
         {
             return DJISDKManager.Instance.WaypointMissionManager.GetWaypointMissionHandler(0).GetCurrentState().ToString();

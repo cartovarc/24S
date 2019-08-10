@@ -37,7 +37,7 @@ namespace _24S
 
         public async void OnSocketDataReceivedAsync(Stream clientStream, String message)
         {
-            System.Diagnostics.Debug.WriteLine("MESSAGE RECEIVED: OnSocketDataReceivedAsync print: {0}", message);
+            //System.Diagnostics.Debug.WriteLine("MESSAGE RECEIVED: OnSocketDataReceivedAsync print: {0}", message);
 
             // {"COMMAND": 'GET_LOCATION',
             //  "COMMAND_TYPE": 'TELEMETRY',
@@ -108,6 +108,11 @@ namespace _24S
                 else if (command.Equals("RESUME_MISSION"))
                 {
                     SDKError err = await DJIMissionManager.Instance.ResumeMission();
+                    resultCode = err.ToString();
+                }
+                else if (command.Equals("STOP_MISSION"))
+                {
+                    SDKError err = await DJIMissionManager.Instance.StopMission();
                     resultCode = err.ToString();
                 }
             }
@@ -182,8 +187,10 @@ namespace _24S
                     float roll = (float)infoCommand.SelectToken("ROLL");
                     float yaw = (float)infoCommand.SelectToken("YAW");
                     float throttle = (float)infoCommand.SelectToken("THROTTLE");
-                    //DJIVirtualRemoteController.Instance.UpdateJoystickValue(pitch, roll, yaw, throttle);
+
+                    DJIVirtualRemoteController.Instance.UpdateJoystickValue(pitch, roll, yaw, throttle);
                     resultCode = SDKError.NO_ERROR.ToString();//TODO
+                    System.Diagnostics.Debug.WriteLine(resultCode.ToString());
                 }
             }
 

@@ -12,6 +12,8 @@
         <Grid x:Name="MainGrid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
             <SwapChainPanel x:Name="swapChainPanel"/>
             <Button Margin="0,0,0,0" Click="TakeOffClick">Take OFF</Button>
+            <Button Margin="0,100,0,0" Click="EnableGSMClick">Enable GSM</Button>
+
         </Grid>
     </Grid>
 </Page>
