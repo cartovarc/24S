@@ -58,23 +58,10 @@ namespace _24S
             }
         }
 
-        private async void ExampleButtonClick(object sender, RoutedEventArgs e)
+        private async void TakeOffClick(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("TEST CLICK");
+            SDKError err = await DJISDKManager.Instance.ComponentManager.GetFlightControllerHandler(0, 0).StartTakeoffAsync();
+            System.Diagnostics.Debug.WriteLine("TAKE OFF: %s", err.ToString());
         }
-
-        private async void StartVideoClick(object sender, RoutedEventArgs e)
-        {
-            DJIVideoManager.Instance.InitializeVideoFeedModule();
-            System.Diagnostics.Debug.WriteLine("START VIDEO CLICK");
-        }
-
-        private async void StopVideoClick(object sender, RoutedEventArgs e)
-        {
-            DJIVideoManager.Instance.UninitializeVideoFeedModule();
-            System.Diagnostics.Debug.WriteLine("STOP VIDEO CLICK");
-        }
-
-
     }
 }
