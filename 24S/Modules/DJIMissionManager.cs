@@ -123,6 +123,22 @@ namespace _24S
             return errStartMission;
         }
 
+        public async Task<SDKError> PauseMission()
+        {
+            SDKError errPauseMission = await DJISDKManager.Instance.WaypointMissionManager.GetWaypointMissionHandler(0).PauseMission();
+            System.Diagnostics.Debug.WriteLine("PAUSE MISSION: " + errPauseMission.ToString());
+
+            return errPauseMission;
+        }
+
+        public async Task<SDKError> ResumeMission()
+        {
+            SDKError errResumeMission = await DJISDKManager.Instance.WaypointMissionManager.GetWaypointMissionHandler(0).ResumeMission();
+            System.Diagnostics.Debug.WriteLine("RESUME MISSION: " + errResumeMission.ToString());
+
+            return errResumeMission;
+        }
+
         public string WaypointMissionCurrentState()
         {
             return DJISDKManager.Instance.WaypointMissionManager.GetWaypointMissionHandler(0).GetCurrentState().ToString();

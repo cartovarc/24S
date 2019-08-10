@@ -100,6 +100,16 @@ namespace _24S
                     jsonObject.MISSION_STATE = DJIMissionManager.Instance.WaypointMissionCurrentState(); //make an object
                     dataToClient = jsonObject;
                 }
+                else if (command.Equals("PAUSE_MISSION"))
+                {
+                    SDKError err = await DJIMissionManager.Instance.PauseMission();
+                    resultCode = err.ToString();
+                }
+                else if (command.Equals("RESUME_MISSION"))
+                {
+                    SDKError err = await DJIMissionManager.Instance.ResumeMission();
+                    resultCode = err.ToString();
+                }
             }
             else if (commandTpye.Equals("AIRCRAFT_INFORMATION"))
             {
@@ -172,7 +182,7 @@ namespace _24S
                     float roll = (float)infoCommand.SelectToken("ROLL");
                     float yaw = (float)infoCommand.SelectToken("YAW");
                     float throttle = (float)infoCommand.SelectToken("THROTTLE");
-                    DJIVirtualRemoteController.Instance.UpdateJoystickValue(pitch, roll, yaw, throttle);
+                    //DJIVirtualRemoteController.Instance.UpdateJoystickValue(pitch, roll, yaw, throttle);
                     resultCode = SDKError.NO_ERROR.ToString();//TODO
                 }
             }
