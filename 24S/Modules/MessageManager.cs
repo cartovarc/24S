@@ -78,7 +78,7 @@ namespace _24S
                 }
                 else if (command.Equals("LOAD_MISSION"))
                 {
-                    JArray infoCommand = (JArray)messageObject.SelectToken("COMMAND_INFO");
+                    JObject infoCommand = (JObject)messageObject.SelectToken("COMMAND_INFO");
                     SDKError err = DJIMissionManager.Instance.LoadMission(infoCommand.ToString());
                     resultCode = err.ToString();
 

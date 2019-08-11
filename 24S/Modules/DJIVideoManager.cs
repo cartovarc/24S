@@ -216,15 +216,24 @@ namespace _24S
 
         private async void OnExecutionFinish(object sender, WaypointMissionStateTransition? value)
         {
-
             if (value != null && value.Value.previous == WaypointMissionState.EXECUTING && value.Value.current == WaypointMissionState.READY_TO_UPLOAD)
             {
-                //TODO: Send stop video request
-                videoClient = null; // close connection with video client
-                System.Diagnostics.Debug.WriteLine("STOP VIDEO CLIENT");
+                Task
+                .Factory
+                .StartNew(() => {
+                    while (DJIComponentManager.Instance.AircraftAltitude > 0)
+                    {
+                        Thread.Sleep(5000);
+
+                    }
+                    //TODO: Send stop video request
+                    videoClient = null; // close connection with video client
+                    System.Diagnostics.Debug.WriteLine("STOP VIDEO CLIENT");
+
+                });
+
             }
         }
-
 
         private void OnVideoMissionRecorded()
         {

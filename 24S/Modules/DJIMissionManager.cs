@@ -38,13 +38,13 @@ namespace _24S
         public SDKError LoadMission(String json_mission)
         {
             JObject missionData = JObject.Parse(json_mission);
-            string landingType = (string) missionData.SelectToken("metodo_aterrizaje");
+            string landingType = (string) missionData.SelectToken("tipo_aterrizaje");
             JArray points = (JArray) missionData.SelectToken("puntos_mision");
 
             JObject firstPoint = (JObject) missionData.SelectToken("punto_inicial");
             double firstPointLatitude = (double) firstPoint.SelectToken("latitud");
             double firstPointLongitude = (double) firstPoint.SelectToken("longitud");
-            double firstPointAltitude = (double) missionData.SelectToken("altitud");
+            double firstPointAltitude = (double)firstPoint.SelectToken("altitud");
 
             int waypointCount = points.Count;
             double maxFlightSpeed = 15; // meters per second TODO

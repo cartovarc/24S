@@ -2,6 +2,7 @@
 using Windows.UI.Xaml.Controls;
 using DJI.WindowsSDK;
 using Windows.UI.Xaml;
+using System.Threading.Tasks;
 
 namespace _24S
 {
@@ -18,8 +19,13 @@ namespace _24S
             DJISDKManager.Instance.RegisterApp("c3155620d9c96af31b741f64");
 
             //Initialize Socket Server
-            SocketServer.Instance.ExecuteServer();
-            SocketServer.Instance.DataReceived += MessageManager.Instance.OnSocketDataReceivedAsync;
+            Task
+                .Factory
+                .StartNew(() => {
+                    SocketServer.Instance.ExecuteServer();
+                    SocketServer.Instance.DataReceived += MessageManager.Instance.OnSocketDataReceivedAsync;
+            });
+
         }
 
 
@@ -66,8 +72,26 @@ namespace _24S
 
         private async void EnableGSMClick(object sender, RoutedEventArgs e)
         {
-            SDKError err = await DJISDKManager.Instance.ComponentManager.GetFlightControllerHandler(0, 0).SetGroundStationModeEnabledAsync(new BoolMsg() { value = true });
-            System.Diagnostics.Debug.WriteLine("TAKE OFF: %s", err.ToString());
+            //SDKError err = await DJISDKManager.Instance.ComponentManager.GetFlightControllerHandler(0, 0).SetGroundStationModeEnabledAsync(new BoolMsg() { value = true });
+            //System.Diagnostics.Debug.WriteLine("TAKE OFF: %s", err.ToString());
+        }
+
+        private async void BottonLightONClick(object sender, RoutedEventArgs e)
+        {
+            SDKError err = await DJISDKManager.Instance.ComponentManager.GetFlightAssistantHandler(0, 0).SetBottomAuxiliaryLightModeAsync(new BottomAuxiliaryLightModeMsg() { value = BottomAuxiliaryLightMode.ON });
+            System.Diagnostics.Debug.WriteLine("LIGHT OFF: {0}", err.ToString());
+        }
+
+        private async void BottonLightOFFClick(object sender, RoutedEventArgs e)
+        {
+            SDKError err = await DJISDKManager.Instance.ComponentManager.GetFlightAssistantHandler(0, 0).SetBottomAuxiliaryLightModeAsync(new BottomAuxiliaryLightModeMsg() { value = BottomAuxiliaryLightMode.OFF });
+            System.Diagnostics.Debug.WriteLine("LIGHT OFF : {0}", err.ToString());
+        }
+
+        private async void LandingClick(object sender, RoutedEventArgs e)
+        {
+            SDKError err = await DJISDKManager.Instance.ComponentManager.GetFlightControllerHandler(0, 0).StartAutoLandingAsync();
+            System.Diagnostics.Debug.WriteLine("landing : {0}", err.ToString());
         }
     }
 }

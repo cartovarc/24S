@@ -13,6 +13,9 @@
             <SwapChainPanel x:Name="swapChainPanel"/>
             <Button Margin="0,0,0,0" Click="TakeOffClick">Take OFF</Button>
             <Button Margin="0,100,0,0" Click="EnableGSMClick">Enable GSM</Button>
+            <Button Margin="0,150,0,0" Click="BottonLightONClick">BottonLightONClick</Button>
+            <Button Margin="0,200,0,0" Click="BottonLightOFFClick">BottonLightOFFClick</Button>
+            <Button Margin="0,260,0,0" Click="LandingClick">LANDING</Button>
 
         </Grid>
     </Grid>
