@@ -128,6 +128,13 @@ namespace _24S
                         jsonObject.altitude = DJIComponentManager.Instance.AircraftAltitude;
                         jsonObject.battery = DJIComponentManager.Instance.AircraftBattery;
                         jsonObject.velocity = DJIComponentManager.Instance.AircraftVelocity;
+                        jsonObject.gimbal_pitch = DJIComponentManager.Instance.AircraftGimbalAttitude.pitch;
+                        jsonObject.gimbal_yaw = DJIComponentManager.Instance.AircraftGimbalAttitude.yaw;
+                        jsonObject.gimbal_roll = DJIComponentManager.Instance.AircraftGimbalAttitude.roll;
+                        jsonObject.aircraft_pitch = DJIComponentManager.Instance.AircraftAttitude.pitch;
+                        jsonObject.aircraft_yaw = DJIComponentManager.Instance.AircraftAttitude.yaw;
+                        jsonObject.aircraft_roll = DJIComponentManager.Instance.AircraftAttitude.roll;
+                        jsonObject.velocity = DJIComponentManager.Instance.AircraftVelocity;
                         //jsonObject.connection = DJIComponentManager.Instance.AircraftConnection;
                         //String jsonString = JsonConvert.SerializeObject(jsonObject);
                         resultCode = SDKError.NO_ERROR.ToString();

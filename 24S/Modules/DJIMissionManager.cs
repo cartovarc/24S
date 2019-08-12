@@ -27,8 +27,8 @@ namespace _24S
                 shootPhotoDistanceInterval = -1,
                 waypointActions = new List<WaypointAction>()
                 {
-                    new WaypointAction(){actionType = WaypointActionType.STAY, actionParam = stayTimeSeconds*1000 },
-                    new WaypointAction(){actionType = WaypointActionType.ROTATE_AIRCRAFT, actionParam = rotation},
+                    //new WaypointAction(){actionType = WaypointActionType.STAY, actionParam = stayTimeSeconds*1000 },
+                    //new WaypointAction(){actionType = WaypointActionType.ROTATE_AIRCRAFT, actionParam = rotation},
                 }
             };
             return waypoint;

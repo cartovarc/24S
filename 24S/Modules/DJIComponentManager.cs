@@ -80,8 +80,31 @@ namespace _24S
             }
         }
 
+        private Attitude _aircraftGimbalAttitude = new Attitude() { pitch = 0, yaw = 0, roll = 0 };
+        public Attitude AircraftGimbalAttitude
+        {
+            get
+            {
+                return _aircraftGimbalAttitude;
+            }
+            set
+            {
+                _aircraftGimbalAttitude = value;
+            }
+        }
 
-
+        private Attitude _aircraftAttitude = new Attitude() { pitch = 0, yaw = 0, roll = 0 };
+        public Attitude AircraftAttitude
+        {
+            get
+            {
+                return _aircraftAttitude;
+            }
+            set
+            {
+                _aircraftAttitude = value;
+            }
+        }
         private DJIComponentManager()
         {
             DJISDKManager.Instance.ComponentManager.GetFlightControllerHandler(0, 0).AircraftLocationChanged += AircraftLocationChanged;
@@ -89,6 +112,8 @@ namespace _24S
             DJISDKManager.Instance.ComponentManager.GetBatteryHandler(0, 0).ChargeRemainingInPercentChanged += AircraftBatteryPercentChanged;
             DJISDKManager.Instance.ComponentManager.GetProductHandler(0).ConnectionChanged += AircraftConnectionChanged;
             DJISDKManager.Instance.ComponentManager.GetFlightControllerHandler(0, 0).VelocityChanged += AircraftVelocityChanged;
+            DJISDKManager.Instance.ComponentManager.GetGimbalHandler(0, 0).GimbalAttitudeChanged += GimbalAttitudeChanged;
+            DJISDKManager.Instance.ComponentManager.GetFlightControllerHandler(0, 0).AttitudeChanged += AttitudeChanged;
 
         }
 
@@ -146,6 +171,28 @@ namespace _24S
                     double y = value.Value.y;
                     double z = value.Value.z;
                     AircraftVelocity = Math.Sqrt(x*x + y*y + z*z);
+                }
+            });
+        }
+
+        private async void GimbalAttitudeChanged(object sender, Attitude? value)
+        {
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                if (value.HasValue)
+                {
+                    AircraftGimbalAttitude = value.Value;
+                }
+            });
+        }
+
+        private async void AttitudeChanged(object sender, Attitude? value)
+        {
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                if (value.HasValue)
+                {
+                    AircraftAttitude = value.Value;
                 }
             });
         }
