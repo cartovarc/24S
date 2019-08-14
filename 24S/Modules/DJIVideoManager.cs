@@ -223,7 +223,7 @@ namespace _24S
                 .StartNew(() => {
                     while (DJIComponentManager.Instance.AircraftAltitude > 0)
                     {
-                        Thread.Sleep(5000);
+                        Thread.Sleep(8000);
 
                     }
                     //TODO: Send stop video request

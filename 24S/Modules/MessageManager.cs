@@ -198,6 +198,16 @@ namespace _24S
                     DJIVirtualRemoteController.Instance.UpdateJoystickValue(pitch, roll, yaw, throttle);
                     resultCode = SDKError.NO_ERROR.ToString();//TODO
                     System.Diagnostics.Debug.WriteLine(resultCode.ToString());
+
+                }else if (command.Equals("GO_HOME"))
+                {
+                    SDKError err =await DJIVirtualRemoteController.Instance.GoHome();
+                    resultCode = err.ToString();
+                }
+                else if (command.Equals("LANDING"))
+                {
+                    SDKError err = await DJIVirtualRemoteController.Instance.Landing();
+                    resultCode = err.ToString();
                 }
             }
 

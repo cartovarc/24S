@@ -1,4 +1,10 @@
 ﻿using DJI.WindowsSDK;
+using System;
+using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
+using DJI.WindowsSDK;
+using System.Threading.Tasks;
+
 
 namespace _24S
 {
@@ -17,6 +23,18 @@ namespace _24S
             System.Diagnostics.Debug.WriteLine("yaw: {0}", yaw);
             System.Diagnostics.Debug.WriteLine("throttle: {0}", throttle);
             DJISDKManager.Instance.VirtualRemoteController.UpdateJoystickValue(throttle, roll, pitch, yaw);
+        }
+
+        public async Task<SDKError> Landing()
+        {
+            SDKError makeLandingError = await DJISDKManager.Instance.ComponentManager.GetFlightControllerHandler(0, 0).StartAutoLandingAsync();
+            return makeLandingError;
+        }
+
+        public async Task<SDKError> GoHome()
+        {
+            SDKError makeLandingError = await DJISDKManager.Instance.ComponentManager.GetFlightControllerHandler(0, 0).StartGoHomeAsync();
+            return makeLandingError;
         }
     }
 }
