@@ -6,17 +6,21 @@ using DJIVideoParser;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Collections;
+using System.Diagnostics;
+using System.Linq;
 
 namespace _24S
 {
-    class DJIVideoManager : Page
+    //class DJIVideoManager : Page
+    class DJIVideoManager
     {
         public static DJIVideoManager Instance { get; } = new DJIVideoManager(); // Singleton
 
         private DJIVideoParser.Parser videoParser; //use videoParser to decode raw data.
         public Stream videoClient { get; set; } = null; // stream for client of video
         SwapChainPanel swapChainPanel = null;
-        private bool videoTest = false; //change to test video without aircraft
+        public bool videoTest = true; //change to test video without aircraft
+        Stopwatch clock = new Stopwatch();
 
         public delegate void VideoMissionRecordedEventHandler();
         public event VideoMissionRecordedEventHandler MissionRecorded;
@@ -26,7 +30,6 @@ namespace _24S
         private DJIVideoManager()
         {
             DJISDKManager.Instance.WaypointMissionManager.GetWaypointMissionHandler(0).StateChanged += OnExecutionFinish;
-            //DJISDKManager.Instance.WaypointMissionManager.GetWaypointMissionHandler(0).ExecutionStateChanged += StartStopMissionVideoRecord;
         }
 
         public void setSwapChainPanel(SwapChainPanel swapChainPanel)
@@ -39,15 +42,18 @@ namespace _24S
             if (videoTest)
             {
                 var t = Task.Run(() => {
-                    while (true)
-                    {
-                        int width = 500;
-                        int height = 500;
-                        byte[] pixelData = new byte[4 * width * height];
+                    
+                    int width = 1280;
+                    int height = 720;
 
-                        int index = 0;
+                    ArrayList pixels = new ArrayList();
+
+                    int index = 0;
+                   
+                    for(int i=0; i<24; i++) {
                         Random rnd = new Random();
-                        for (int y = 0; y < height; ++y)
+                        byte[] pixelData = new byte[4 * width * height];
+                        for (int y = 0; y < height; ++y) {
                             for (int x = 0; x < width; ++x)
                             {
 
@@ -56,10 +62,18 @@ namespace _24S
                                 pixelData[index++] = (byte)rnd.Next(0, 255); ;  // R
                                 pixelData[index++] = (byte)rnd.Next(0, 255); ;  // A
                             }
-
-                        ReceiveDecodedData(pixelData, width, height);
-
-                        if (videoParser != null) break;
+                        }
+                        index = 0;
+                        pixels.Add(pixelData);
+                    }
+                    clock.Start();
+                    index = 0;
+                    while (true)
+                    {
+                        ReceiveDecodedData((byte[]) pixels[index++], width, height);
+                        index = index % 24;
+                        countFrame++;
+                        Thread.Sleep(25);
                     }
                 });
 
@@ -67,8 +81,8 @@ namespace _24S
             }
 
             //Must in UI Thread
-
-            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+            Page pageAux = new Page();
+            await pageAux.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
             {
                 //Raw data and decoded data listener
                 if (videoParser == null)
@@ -96,6 +110,7 @@ namespace _24S
             {
                 videoParser.SetSurfaceAndVideoCallback(0, 0, null, null);
                 DJISDKManager.Instance.VideoFeeder.GetPrimaryVideoFeed(0).VideoDataUpdated -= OnVideoPush;
+                DJISDKManager.Instance.VideoFeeder.GetPrimaryVideoFeed(0).VideoDataUpdated -= OnVideoPush;
                 videoParser = null;
             }
         }
@@ -106,7 +121,7 @@ namespace _24S
             videoParser.PushVideoData(0, 0, bytes, bytes.Length);
         }
 
-        private int countFrame = 0;
+        private int countFrame = 0; // use to inspect fps on video test
         public Task sendVideoToClientInOrder(byte[] data, int width, int height)
         {
             return Task.Factory.StartNew(
@@ -115,11 +130,13 @@ namespace _24S
                     {
                         if (videoClient != null)
                         {
-                            if (countFrame % 2 == 0)
+                            if (countFrame % 100 == 0 && videoTest)
                             {
-                                videoClient.Write(data, 0, data.Length); // send bytes to the client
+                                int fps = (int)(countFrame / (clock.ElapsedMilliseconds / 1000.0));
+                                System.Diagnostics.Debug.WriteLine("fps: {0}", fps);
+
                             }
-                            countFrame++;
+                            videoClient.Write(data, 0, data.Length); // send bytes to the client
                         }
                     }
                     catch (System.IO.IOException e)
@@ -167,50 +184,12 @@ namespace _24S
             }
         }
 
-        private async Task<SDKError> SetCameraModeToRecord()
+        public void setClientStream(Stream clientStream)
         {
-            SDKError err =  await SetCameraWorkMode(CameraWorkMode.RECORD_VIDEO);
-            return err;
-        }
-
-        private async Task<SDKError> SetCameraWorkMode(CameraWorkMode mode)
-        {
-            CameraWorkModeMsg workMode = new CameraWorkModeMsg
+            videoClient = clientStream;
+            if (videoTest)
             {
-                value = mode,
-            };
-            SDKError retCode = await DJISDKManager.Instance.ComponentManager.GetCameraHandler(0, 0).SetCameraWorkModeAsync(workMode);
-            return retCode;
-        }
-
-        private async Task<SDKError> StartRecordVideo()
-        {
-            SDKError retCode = await DJISDKManager.Instance.ComponentManager.GetCameraHandler(0, 0).StartRecordAsync();
-            return retCode;
-        }
-
-        private async Task<SDKError> StopRecordVideo()
-        {
-            SDKError retCode = await DJISDKManager.Instance.ComponentManager.GetCameraHandler(0, 0).StopRecordAsync();
-            return retCode;
-        }
-
-        private async void StartStopMissionVideoRecord(object sender, WaypointMissionExecutionState? value)
-        {
-            if (value.Value.state == WaypointMissionExecuteState.INITIALIZING)
-            {
-                await SetCameraModeToRecord();
-                await StartRecordVideo();
-            }
-            else if (value.Value.isExecutionFinish)
-            {
-                SDKError err = await StopRecordVideo();
-
-                if(err == SDKError.NO_ERROR)
-                {
-                    OnVideoMissionRecorded();
-                }
-                
+                InitializeVideoFeedModule();
             }
         }
 
@@ -233,11 +212,6 @@ namespace _24S
                 });
 
             }
-        }
-
-        private void OnVideoMissionRecorded()
-        {
-            MissionRecorded?.Invoke();
         }
 
     }

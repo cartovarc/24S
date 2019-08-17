@@ -166,7 +166,7 @@ namespace _24S
                 }
                 else if (command.Equals("ESTABLISH_CONNECTION"))
                 {
-                    DJIVideoManager.Instance.videoClient = clientStream; //set a video stream client
+                    DJIVideoManager.Instance.setClientStream(clientStream); //set a video stream client
                     resultCode = SDKError.NO_ERROR.ToString();//TODO
                 }
                     

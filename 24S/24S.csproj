@@ -121,7 +121,6 @@
     </Compile>
     <Compile Include="Modules\DJIComponentManager.cs" />
     <Compile Include="Modules\DJIMissionManager.cs" />
-    <Compile Include="Modules\DJIPlayBackManager.cs" />
     <Compile Include="Modules\DJIVideoManager.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
