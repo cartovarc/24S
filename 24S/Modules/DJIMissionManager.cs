@@ -10,7 +10,7 @@ namespace _24S
     {
         public static DJIMissionManager Instance { get; } = new DJIMissionManager(); // Singleton
 
-        private static Waypoint InitWaypoint(double latitude, double longitude, double altitude, double gimbalPitch, double speed, int stayTimeSeconds, int rotation)
+        private static Waypoint InitWaypoint(double latitude, double longitude, double altitude, double gimbalPitch, double speed, int stayTimeSeconds, int rotation, int orientation)
         {
             Waypoint waypoint = new Waypoint()
             {
@@ -18,7 +18,7 @@ namespace _24S
                 altitude = altitude,
                 gimbalPitch = gimbalPitch,
                 turnMode = WaypointTurnMode.CLOCKWISE,
-                heading = 0,
+                heading = orientation,
                 actionRepeatTimes = 1,
                 actionTimeoutInSeconds = 60,
                 cornerRadiusInMeters = 0.2,
@@ -57,7 +57,7 @@ namespace _24S
             if (landingType.Equals("USE_PL_ARAS"))
             {
                 double goFirstPointSpeed = 5;
-                waypoints.Add(InitWaypoint(firstPointLatitude, firstPointLongitude, firstPointAltitude, 0, goFirstPointSpeed, 0, 0));
+                waypoints.Add(InitWaypoint(firstPointLatitude, firstPointLongitude, firstPointAltitude, 0, goFirstPointSpeed, 0, 0, 0));
             }
 
             foreach (JObject point in points)
@@ -69,7 +69,9 @@ namespace _24S
                 double altitude = (double)point.SelectToken("altitud");
                 int stayTime = (int)point.SelectToken("tiempo");
                 int rotation = (int)point.SelectToken("rotacion");
-                waypoints.Add(InitWaypoint(latitude, longitude, altitude, gimbalPitch, speed, stayTime, rotation));
+                int orientation = (int)point.SelectToken("orientacion");
+                System.Diagnostics.Debug.WriteLine(orientation);
+                waypoints.Add(InitWaypoint(latitude, longitude, altitude, gimbalPitch, speed, stayTime, rotation, orientation));
             }
 
             double nowLat = DJIComponentManager.Instance.AircraftLocation.latitude;
@@ -83,9 +85,9 @@ namespace _24S
             if (landingType.Equals("USE_PL_ARAS"))
             {
                 //last waypoints
-                waypoints.Add(InitWaypoint(firstPointLatitude, firstPointLongitude, overFirstPointAltitude, returnToHomeGimbalAngle, goOverFirstPointSpeed, 0, 0));
-                waypoints.Add(InitWaypoint(firstPointLatitude, firstPointLongitude, firstPointAltitude, returnToHomeGimbalAngle, landingSpeed, 0, 0));
-                waypoints.Add(InitWaypoint(nowLat, nowLng, firstPointAltitude, returnToHomeGimbalAngle, landingSpeed, 0, 0));
+                waypoints.Add(InitWaypoint(firstPointLatitude, firstPointLongitude, overFirstPointAltitude, returnToHomeGimbalAngle, goOverFirstPointSpeed, 0, 0, 0));
+                waypoints.Add(InitWaypoint(firstPointLatitude, firstPointLongitude, firstPointAltitude, returnToHomeGimbalAngle, landingSpeed, 0, 0, 0));
+                waypoints.Add(InitWaypoint(nowLat, nowLng, firstPointAltitude, returnToHomeGimbalAngle, landingSpeed, 0, 0, 0));
                 waypointCount += 4; //additional waypoints
             }
 
@@ -95,7 +97,7 @@ namespace _24S
                 maxFlightSpeed = maxFlightSpeed,
                 autoFlightSpeed = autoFlightSpeed,
                 finishedAction = landingType.Equals("USE_PL_ARAS") ? WaypointMissionFinishedAction.AUTO_LAND : WaypointMissionFinishedAction.GO_HOME,
-                headingMode = WaypointMissionHeadingMode.AUTO,
+                headingMode = WaypointMissionHeadingMode.USING_WAYPOINT_HEADING,
                 flightPathMode = WaypointMissionFlightPathMode.NORMAL,
                 gotoFirstWaypointMode = WaypointMissionGotoFirstWaypointMode.SAFELY,
                 exitMissionOnRCSignalLostEnabled = false,

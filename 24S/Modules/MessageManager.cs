@@ -135,6 +135,7 @@ namespace _24S
                         jsonObject.aircraft_yaw = DJIComponentManager.Instance.AircraftAttitude.yaw;
                         jsonObject.aircraft_roll = DJIComponentManager.Instance.AircraftAttitude.roll;
                         jsonObject.velocity = DJIComponentManager.Instance.AircraftVelocity;
+                        jsonObject.gps = DJIComponentManager.Instance.AircraftSignalLevel.value;
                         //jsonObject.connection = DJIComponentManager.Instance.AircraftConnection;
                         //String jsonString = JsonConvert.SerializeObject(jsonObject);
                         resultCode = SDKError.NO_ERROR.ToString();

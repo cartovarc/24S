@@ -93,5 +93,10 @@ namespace _24S
             SDKError err = await DJISDKManager.Instance.ComponentManager.GetFlightControllerHandler(0, 0).StartAutoLandingAsync();
             System.Diagnostics.Debug.WriteLine("landing : {0}", err.ToString());
         }
+
+        private async void MissionStateClick(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine("mission state : {0}", DJIMissionManager.Instance.WaypointMissionCurrentState());
+        }
     }
 }

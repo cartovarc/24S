@@ -11,15 +11,15 @@ using System.Linq;
 
 namespace _24S
 {
-    //class DJIVideoManager : Page
-    class DJIVideoManager
+    
+    class DJIVideoManager : Page
     {
         public static DJIVideoManager Instance { get; } = new DJIVideoManager(); // Singleton
 
         private DJIVideoParser.Parser videoParser; //use videoParser to decode raw data.
         public Stream videoClient { get; set; } = null; // stream for client of video
         SwapChainPanel swapChainPanel = null;
-        public bool videoTest = true; //change to test video without aircraft
+        public bool videoTest = false; //change to test video without aircraft
         Stopwatch clock = new Stopwatch();
 
         public delegate void VideoMissionRecordedEventHandler();
@@ -81,8 +81,8 @@ namespace _24S
             }
 
             //Must in UI Thread
-            Page pageAux = new Page();
-            await pageAux.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+            //Page pageAux = new Page();
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
             {
                 //Raw data and decoded data listener
                 if (videoParser == null)
@@ -159,7 +159,11 @@ namespace _24S
             if (videoClient != null)
             {
                 //System.Diagnostics.Debug.WriteLine("tamano: {0} {1} {2}", width, height, data.Length);
-                sendVideoToClientInOrder(data, width, height);
+                if (countFrame % 2 == 0)
+                {
+                    sendVideoToClientInOrder(data, width, height);
+                }
+                countFrame++;
             }
         }
 
@@ -202,7 +206,7 @@ namespace _24S
                 .StartNew(() => {
                     while (DJIComponentManager.Instance.AircraftAltitude > 0)
                     {
-                        Thread.Sleep(8000);
+                        Thread.Sleep(15000);
 
                     }
                     //TODO: Send stop video request

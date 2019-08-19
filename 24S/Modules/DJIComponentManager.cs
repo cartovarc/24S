@@ -105,6 +105,20 @@ namespace _24S
                 _aircraftAttitude = value;
             }
         }
+
+        private FCGPSSignalLevelMsg _aircraftSignalLevel = new FCGPSSignalLevelMsg() { value = FCGPSSignalLevel.UNKNOWN };
+        public FCGPSSignalLevelMsg AircraftSignalLevel
+        {
+            get
+            {
+                return _aircraftSignalLevel;
+            }
+            set
+            {
+                _aircraftSignalLevel = value;
+            }
+        }
+
         private DJIComponentManager()
         {
             DJISDKManager.Instance.ComponentManager.GetFlightControllerHandler(0, 0).AircraftLocationChanged += AircraftLocationChanged;
@@ -114,6 +128,7 @@ namespace _24S
             DJISDKManager.Instance.ComponentManager.GetFlightControllerHandler(0, 0).VelocityChanged += AircraftVelocityChanged;
             DJISDKManager.Instance.ComponentManager.GetGimbalHandler(0, 0).GimbalAttitudeChanged += GimbalAttitudeChanged;
             DJISDKManager.Instance.ComponentManager.GetFlightControllerHandler(0, 0).AttitudeChanged += AttitudeChanged;
+            DJISDKManager.Instance.ComponentManager.GetFlightControllerHandler(0, 0).GPSSignalLevelChanged += GPSSignalLevelChanged;
 
         }
 
@@ -193,6 +208,17 @@ namespace _24S
                 if (value.HasValue)
                 {
                     AircraftAttitude = value.Value;
+                }
+            });
+        }
+
+        private async void GPSSignalLevelChanged(object sender, FCGPSSignalLevelMsg? value)
+        {
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                if (value.HasValue)
+                {
+                    AircraftSignalLevel = value.Value;
                 }
             });
         }
