@@ -1,0 +1,2 @@
+MainPackage=C:\Users\tovar\Desktop\ROSAS_CSHARP\24S\24S\bin\x64\Release\24S_1.0.1.0_x64.appx
+SymbolPackage=C:\Users\tovar\Desktop\ROSAS_CSHARP\24S\24S\AppPackages\24S_1.0.1.0_Test\24S_1.0.1.0_x64.appxsym

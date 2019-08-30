@@ -1,8 +1,4 @@
 ﻿using DJI.WindowsSDK;
-using System;
-using System.Collections.Generic;
-using Newtonsoft.Json.Linq;
-using DJI.WindowsSDK;
 using System.Threading.Tasks;
 
 

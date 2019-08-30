@@ -17,6 +17,8 @@
             <Button Margin="0,200,0,0" Click="BottonLightOFFClick">BottonLightOFFClick</Button>
             <Button Margin="0,260,0,0" Click="LandingClick">LANDING</Button>
             <Button Margin="0,320,0,0" Click="MissionStateClick">MISSION STATE</Button>
+            <Button Margin="0,380,0,0" Click="ZoomInClick">ZOOM IN</Button>
+            <Button Margin="0,440,0,0" Click="ZoomOutClick">ZOOM OUT</Button>
 
         </Grid>
     </Grid>

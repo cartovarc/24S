@@ -24,7 +24,7 @@ namespace _24S
                 .StartNew(() => {
                     SocketServer.Instance.ExecuteServer();
                     SocketServer.Instance.DataReceived += MessageManager.Instance.OnSocketDataReceivedAsync;
-            });
+                });
 
         }
 
@@ -46,7 +46,7 @@ namespace _24S
 
                             DJIVideoManager.Instance.setSwapChainPanel(swapChainPanel);
                             DJIVideoManager.Instance.InitializeVideoFeedModule(); //Initialize video streaming when aircraft is connected
-                            DJISDKManager.Instance.ComponentManager.GetFlightAssistantHandler(0, 0).SetVisionAssistedPositioningEnabledAsync(new BoolMsg() { value = true});
+                            DJISDKManager.Instance.ComponentManager.GetFlightAssistantHandler(0, 0).SetVisionAssistedPositioningEnabledAsync(new BoolMsg() { value = true });
                         }
                         else
                         {
@@ -97,6 +97,19 @@ namespace _24S
         private async void MissionStateClick(object sender, RoutedEventArgs e)
         {
             System.Diagnostics.Debug.WriteLine("mission state : {0}", DJIMissionManager.Instance.WaypointMissionCurrentState());
+        }
+
+        private async void ZoomInClick(object sender, RoutedEventArgs e)
+        {
+            SDKError err = await DJISDKManager.Instance.ComponentManager.GetCameraHandler(0, 0).CameraStartContinuousOpticalZoomAsync(new CameraContinuousOpticalZoomParam() { direction = CameraZoomDirection.ZOOM_IN, speed = CameraZoomSpeed.NORMAL });
+            System.Diagnostics.Debug.WriteLine("zoom in : {0}", err);
+        }
+
+        private async void ZoomOutClick(object sender, RoutedEventArgs e)
+        {
+            SDKError err = await DJISDKManager.Instance.ComponentManager.GetCameraHandler(0, 0).CameraStartContinuousOpticalZoomAsync(new CameraContinuousOpticalZoomParam() { direction = CameraZoomDirection.ZOOM_OUT, speed = CameraZoomSpeed.NORMAL });
+            System.Diagnostics.Debug.WriteLine("zoom out : {0}", err);
+
         }
     }
 }

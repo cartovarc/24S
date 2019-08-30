@@ -1,0 +1,2 @@
+MainPackage=C:\Users\tovar\Desktop\ROSAS_CSHARP\24S\DJI-BlueAras-Bridge\bin\x64\Release\DJI-BlueAras-Bridge_1.0.2.0_x64.appx
+SymbolPackage=C:\Users\tovar\Desktop\ROSAS_CSHARP\24S\DJI-BlueAras-Bridge\AppPackages\DJI-BlueAras-Bridge_1.0.2.0_Test\DJI-BlueAras-Bridge_1.0.2.0_x64.appxsym
