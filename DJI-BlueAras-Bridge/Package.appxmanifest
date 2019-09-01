@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" IgnorableNamespaces="uap mp rescap">
-  <Identity Name="9027557c-8e92-4427-8375-542fbc8ee4c1" Publisher="CN=tovar" Version="1.0.2.0" />
+  <Identity Name="9027557c-8e92-4427-8375-542fbc8ee4c1" Publisher="CN=BLUEARAS" Version="1.0.10.0" />
   <Properties>
     <DisplayName>DJI-BlueAras-Bridge</DisplayName>
-    <PublisherDisplayName>tovar</PublisherDisplayName>
+    <PublisherDisplayName>BLUEARAS</PublisherDisplayName>
     <Logo>Images\StoreLogo.png</Logo>
   </Properties>
   <Dependencies>
@@ -23,6 +23,7 @@
   </Applications>
   <Capabilities>
     <Capability Name="internetClient" />
+    <Capability Name="internetClientServer" />
     <rescap:Capability Name="runFullTrust" />
   </Capabilities>
 </Package>

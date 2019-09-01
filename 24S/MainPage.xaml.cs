@@ -3,6 +3,7 @@ using Windows.UI.Xaml.Controls;
 using DJI.WindowsSDK;
 using Windows.UI.Xaml;
 using System.Threading.Tasks;
+using Windows.UI.Popups;
 
 namespace _24S
 {
@@ -15,8 +16,11 @@ namespace _24S
             this.InitializeComponent();
             DJISDKManager.Instance.SDKRegistrationStateChanged += Instance_SDKRegistrationEvent;
 
+            // Log Application Start
+            LoggingServices.Instance.WriteLine<MainPage>("Application starting...", MetroLog.LogLevel.Info);
+
             //Replace with your registered App Key. Make sure your App Key matched your application's package name on DJI developer center.
-            DJISDKManager.Instance.RegisterApp("c3155620d9c96af31b741f64");
+            DJISDKManager.Instance.RegisterApp("979d9e5b7053c25f2d50c2f9");
 
             //Initialize Socket Server
             Task
@@ -25,15 +29,15 @@ namespace _24S
                     SocketServer.Instance.ExecuteServer();
                     SocketServer.Instance.DataReceived += MessageManager.Instance.OnSocketDataReceivedAsync;
                 });
-
         }
 
 
-        private void Instance_SDKRegistrationEvent(SDKRegistrationState state, SDKError resultCode)
+        private async void Instance_SDKRegistrationEvent(SDKRegistrationState state, SDKError resultCode)
         {
             if (resultCode == SDKError.NO_ERROR)
             {
-                System.Diagnostics.Debug.WriteLine("Register app successfully.");
+                string registerSuccessfullyMessage = "Register app successfully.";
+                LoggingServices.Instance.WriteLine<MainPage>("Register app successfully.", MetroLog.LogLevel.Info);
 
                 //The product connection state will be updated when it changes here.
                 DJISDKManager.Instance.ComponentManager.GetProductHandler(0).ProductTypeChanged += async delegate (object sender, ProductTypeMsg? value)
@@ -42,7 +46,7 @@ namespace _24S
                     {
                         if (value != null && value?.value != ProductType.UNRECOGNIZED)
                         {
-                            System.Diagnostics.Debug.WriteLine("The Aircraft is connected now.");
+                            LoggingServices.Instance.WriteLine<MainPage>("The Aircraft is connected now.", MetroLog.LogLevel.Info);
 
                             DJIVideoManager.Instance.setSwapChainPanel(swapChainPanel);
                             DJIVideoManager.Instance.InitializeVideoFeedModule(); //Initialize video streaming when aircraft is connected
@@ -50,7 +54,7 @@ namespace _24S
                         }
                         else
                         {
-                            System.Diagnostics.Debug.WriteLine("The Aircraft is disconnected now.");
+                            LoggingServices.Instance.WriteLine<MainPage>("The Aircraft is disconnected now.", MetroLog.LogLevel.Info);
                             //You can hide your pages according to the aircraft connection state here, or show the connection tips to the users.
                         }
                     });
@@ -59,57 +63,59 @@ namespace _24S
             }
             else
             {
-                System.Diagnostics.Debug.WriteLine("Register SDK failed, the error is: ");
-                System.Diagnostics.Debug.WriteLine(resultCode.ToString());
+                string registerFailedMessage = "Register SDK failed, the error is: " + resultCode.ToString();
+                LoggingServices.Instance.WriteLine<MainPage>(registerFailedMessage, MetroLog.LogLevel.Error);
             }
         }
 
+        #region debug_buttons
         private async void TakeOffClick(object sender, RoutedEventArgs e)
         {
             SDKError err = await DJISDKManager.Instance.ComponentManager.GetFlightControllerHandler(0, 0).StartTakeoffAsync();
-            System.Diagnostics.Debug.WriteLine("TAKE OFF: %s", err.ToString());
-        }
-
-        private async void EnableGSMClick(object sender, RoutedEventArgs e)
-        {
-            //SDKError err = await DJISDKManager.Instance.ComponentManager.GetFlightControllerHandler(0, 0).SetGroundStationModeEnabledAsync(new BoolMsg() { value = true });
-            //System.Diagnostics.Debug.WriteLine("TAKE OFF: %s", err.ToString());
+            var dialog = new MessageDialog("take off: " + err.ToString(), "Info");
+            var result = await dialog.ShowAsync();
         }
 
         private async void BottonLightONClick(object sender, RoutedEventArgs e)
         {
             SDKError err = await DJISDKManager.Instance.ComponentManager.GetFlightAssistantHandler(0, 0).SetBottomAuxiliaryLightModeAsync(new BottomAuxiliaryLightModeMsg() { value = BottomAuxiliaryLightMode.ON });
-            System.Diagnostics.Debug.WriteLine("LIGHT OFF: {0}", err.ToString());
+            var dialog = new MessageDialog("light on: " + err.ToString(), "Info");
+            var result = await dialog.ShowAsync();
         }
 
         private async void BottonLightOFFClick(object sender, RoutedEventArgs e)
         {
             SDKError err = await DJISDKManager.Instance.ComponentManager.GetFlightAssistantHandler(0, 0).SetBottomAuxiliaryLightModeAsync(new BottomAuxiliaryLightModeMsg() { value = BottomAuxiliaryLightMode.OFF });
-            System.Diagnostics.Debug.WriteLine("LIGHT OFF : {0}", err.ToString());
+            var dialog = new MessageDialog("light off: " + err.ToString(), "Info");
+            var result = await dialog.ShowAsync();
         }
 
         private async void LandingClick(object sender, RoutedEventArgs e)
         {
             SDKError err = await DJISDKManager.Instance.ComponentManager.GetFlightControllerHandler(0, 0).StartAutoLandingAsync();
-            System.Diagnostics.Debug.WriteLine("landing : {0}", err.ToString());
+            var dialog = new MessageDialog("landing: " + err.ToString(), "Info");
+            var result = await dialog.ShowAsync();
         }
 
         private async void MissionStateClick(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("mission state : {0}", DJIMissionManager.Instance.WaypointMissionCurrentState());
+            var dialog = new MessageDialog("mission state: " + DJIMissionManager.Instance.WaypointMissionCurrentState(), "Info");
+            var result = await dialog.ShowAsync();
         }
 
         private async void ZoomInClick(object sender, RoutedEventArgs e)
         {
             SDKError err = await DJISDKManager.Instance.ComponentManager.GetCameraHandler(0, 0).CameraStartContinuousOpticalZoomAsync(new CameraContinuousOpticalZoomParam() { direction = CameraZoomDirection.ZOOM_IN, speed = CameraZoomSpeed.NORMAL });
-            System.Diagnostics.Debug.WriteLine("zoom in : {0}", err);
+            var dialog = new MessageDialog("zoom in: " + err.ToString(), "Info");
+            var result = await dialog.ShowAsync();
         }
 
         private async void ZoomOutClick(object sender, RoutedEventArgs e)
         {
             SDKError err = await DJISDKManager.Instance.ComponentManager.GetCameraHandler(0, 0).CameraStartContinuousOpticalZoomAsync(new CameraContinuousOpticalZoomParam() { direction = CameraZoomDirection.ZOOM_OUT, speed = CameraZoomSpeed.NORMAL });
-            System.Diagnostics.Debug.WriteLine("zoom out : {0}", err);
-
+            var dialog = new MessageDialog("zoom out: " + err.ToString(), "Info");
+            var result = await dialog.ShowAsync();
         }
+        #endregion
     }
 }

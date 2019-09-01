@@ -12,14 +12,12 @@
         <Grid x:Name="MainGrid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
             <SwapChainPanel x:Name="swapChainPanel"/>
             <Button Margin="0,0,0,0" Click="TakeOffClick">Take OFF</Button>
-            <Button Margin="0,100,0,0" Click="EnableGSMClick">Enable GSM</Button>
-            <Button Margin="0,150,0,0" Click="BottonLightONClick">BottonLightONClick</Button>
-            <Button Margin="0,200,0,0" Click="BottonLightOFFClick">BottonLightOFFClick</Button>
-            <Button Margin="0,260,0,0" Click="LandingClick">LANDING</Button>
-            <Button Margin="0,320,0,0" Click="MissionStateClick">MISSION STATE</Button>
-            <Button Margin="0,380,0,0" Click="ZoomInClick">ZOOM IN</Button>
-            <Button Margin="0,440,0,0" Click="ZoomOutClick">ZOOM OUT</Button>
-
+            <Button Margin="0,70,0,0" Click="LandingClick">Landing</Button>
+            <Button Margin="0,140,0,0" Click="BottonLightONClick">Light ON</Button>
+            <Button Margin="0,210,0,0" Click="BottonLightOFFClick">Light OFF</Button>
+            <Button Margin="0,280,0,0" Click="ZoomInClick">Zoom IN</Button>
+            <Button Margin="0,350,0,0" Click="ZoomOutClick">Zoom OUT</Button>
+            <Button Margin="0,420,0,0" Click="MissionStateClick">Mission State</Button>
         </Grid>
     </Grid>
 </Page>
