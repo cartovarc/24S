@@ -70,7 +70,6 @@ namespace _24S
                 int stayTime = (int)point.SelectToken("tiempo");
                 int rotation = (int)point.SelectToken("rotacion");
                 int orientation = (int)point.SelectToken("orientacion");
-                System.Diagnostics.Debug.WriteLine(orientation);
                 waypoints.Add(InitWaypoint(latitude, longitude, altitude, gimbalPitch, speed, stayTime, rotation, orientation));
             }
 
@@ -109,7 +108,7 @@ namespace _24S
 
             //LoadMission
             SDKError loadError = DJISDKManager.Instance.WaypointMissionManager.GetWaypointMissionHandler(0).LoadMission(mission);
-            System.Diagnostics.Debug.WriteLine("LOAD MISSION: " + loadError.ToString());
+            LoggingServices.Instance.WriteLine<DJIComponentManager>("LOAD MISSION: " + loadError.ToString(), MetroLog.LogLevel.Trace);
 
             return loadError;
 
@@ -119,7 +118,7 @@ namespace _24S
         {
             //UploadMission
             SDKError uploadError = await DJISDKManager.Instance.WaypointMissionManager.GetWaypointMissionHandler(0).UploadMission();
-            System.Diagnostics.Debug.WriteLine("UPLOAD MISSION: " + uploadError.ToString());
+            LoggingServices.Instance.WriteLine<DJIComponentManager>("UPLOAD MISSION: " + uploadError.ToString(), MetroLog.LogLevel.Trace);
 
             return uploadError;
         }
@@ -128,7 +127,7 @@ namespace _24S
         {
             //6. StartMission
             SDKError errStartMission = await DJISDKManager.Instance.WaypointMissionManager.GetWaypointMissionHandler(0).StartMission();
-            System.Diagnostics.Debug.WriteLine("START MISSION: " + errStartMission.ToString());
+            LoggingServices.Instance.WriteLine<DJIComponentManager>("START MISSION: " + errStartMission.ToString(), MetroLog.LogLevel.Trace);
 
             return errStartMission;
         }
@@ -136,7 +135,7 @@ namespace _24S
         public async Task<SDKError> PauseMission()
         {
             SDKError errPauseMission = await DJISDKManager.Instance.WaypointMissionManager.GetWaypointMissionHandler(0).PauseMission();
-            System.Diagnostics.Debug.WriteLine("PAUSE MISSION: " + errPauseMission.ToString());
+            LoggingServices.Instance.WriteLine<DJIComponentManager>("PAUSE MISSION: " + errPauseMission.ToString(), MetroLog.LogLevel.Trace);
 
             return errPauseMission;
         }
@@ -144,7 +143,7 @@ namespace _24S
         public async Task<SDKError> ResumeMission()
         {
             SDKError errResumeMission = await DJISDKManager.Instance.WaypointMissionManager.GetWaypointMissionHandler(0).ResumeMission();
-            System.Diagnostics.Debug.WriteLine("RESUME MISSION: " + errResumeMission.ToString());
+            LoggingServices.Instance.WriteLine<DJIComponentManager>("RESUME MISSION: " + errResumeMission.ToString(), MetroLog.LogLevel.Trace);
 
             return errResumeMission;
         }
@@ -152,7 +151,7 @@ namespace _24S
         public async Task<SDKError> StopMission()
         {
             SDKError errStopMission = await DJISDKManager.Instance.WaypointMissionManager.GetWaypointMissionHandler(0).StopMission();
-            System.Diagnostics.Debug.WriteLine("STOP MISSION: " + errStopMission.ToString());
+            LoggingServices.Instance.WriteLine<DJIComponentManager>("STOP MISSION: " + errStopMission.ToString(), MetroLog.LogLevel.Trace);
 
             return errStopMission;
         }

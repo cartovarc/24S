@@ -240,21 +240,22 @@ namespace _24S
         public async Task<SDKError> SetPrecisionLanding(bool value)
         {
             SDKError errSetPrecisionLanding = await DJISDKManager.Instance.ComponentManager.GetFlightAssistantHandler(0, 0).SetPrecisionLandingEnabledAsync(new BoolMsg() { value = value });
-            System.Diagnostics.Debug.WriteLine(String.Format("Set precision landing to {0}: {1}", value, errSetPrecisionLanding.ToString()));
+            LoggingServices.Instance.WriteLine<DJIComponentManager>("Set precision landing to " + value + ": " + errSetPrecisionLanding.ToString(), MetroLog.LogLevel.Trace);
             return errSetPrecisionLanding;
         }
 
         public async Task<SDKError> SetGroundStationModeEnabled(bool value)
         {
             SDKError errSetGroundStationModeEnabled = await DJISDKManager.Instance.ComponentManager.GetFlightControllerHandler(0, 0).SetGroundStationModeEnabledAsync(new BoolMsg() { value = true });
-            System.Diagnostics.Debug.WriteLine(String.Format("Set Ground Station Mode Enabled to {0}: {1}", value, errSetGroundStationModeEnabled.ToString()));
+            LoggingServices.Instance.WriteLine<DJIComponentManager>("Set Ground Station Mode Enabled to " + value + ": " + errSetGroundStationModeEnabled.ToString(), MetroLog.LogLevel.Trace);
             return errSetGroundStationModeEnabled;
         }
 
         public async Task<SDKError> RotateGimbalByAngle(double pitch, double roll, double yaw, double duration)
         {
             SDKError errRotateGimbalByAngle = await DJISDKManager.Instance.ComponentManager.GetGimbalHandler(0, 0).RotateByAngleAsync(new GimbalAngleRotation() { pitch = pitch, roll = roll, yaw = yaw, duration = duration });
-            System.Diagnostics.Debug.WriteLine(String.Format("Rotate by angle: {0}", errRotateGimbalByAngle.ToString()));
+            LoggingServices.Instance.WriteLine<DJIComponentManager>("Rotate by angle: " + errRotateGimbalByAngle.ToString(), MetroLog.LogLevel.Trace);
+
             return errRotateGimbalByAngle;
         }
     }

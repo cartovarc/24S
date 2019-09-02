@@ -20,7 +20,7 @@ namespace _24S
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("SOMETHING WRONG SENDING MESSAGE TO STREAM CLIENT: sendStringMessageToClient print: {0}", e.ToString());
+                LoggingServices.Instance.WriteLine<MessageManager>("SOMETHING WRONG SENDING MESSAGE TO STREAM CLIENT: " + e.ToString(), MetroLog.LogLevel.Error);
             }
 
         }
@@ -37,7 +37,7 @@ namespace _24S
 
         public async void OnSocketDataReceivedAsync(Stream clientStream, String message)
         {
-            //System.Diagnostics.Debug.WriteLine("MESSAGE RECEIVED: OnSocketDataReceivedAsync print: {0}", message);
+            LoggingServices.Instance.WriteLine<MessageManager>("MESSAGE RECEIVED: OnSocketDataReceivedAsync: " + message, MetroLog.LogLevel.Trace);
 
             // {"COMMAND": 'GET_LOCATION',
             //  "COMMAND_TYPE": 'TELEMETRY',
@@ -53,7 +53,7 @@ namespace _24S
             catch (Newtonsoft.Json.JsonException e)
             {
                 sendStringMessageToClient(clientStream, buildResponse(false, "JSON_PARSE_ERROR", null));
-                System.Diagnostics.Debug.WriteLine("JSON PARSE ERROR: OnSocketDataReceivedAsync print {0}", e.ToString());
+                LoggingServices.Instance.WriteLine<MessageManager>("JSON PARSE ERROR: OnSocketDataReceivedAsync print: " + e.ToString(), MetroLog.LogLevel.Error);
                 return;
             }
 
@@ -181,7 +181,6 @@ namespace _24S
                     double roll = 0.0; //(double)infoCommand.SelectToken("roll");
                     double yaw = (double)infoCommand.SelectToken("x");
                     double duration = 1; //(double)infoCommand.SelectToken("duration");
-                    System.Diagnostics.Debug.WriteLine("mensaje");
                     SDKError err = await DJIComponentManager.Instance.RotateGimbalByAngle(pitch * factor, roll * factor, yaw * factor, duration);
                     resultCode = err.ToString();
                 }
@@ -198,8 +197,6 @@ namespace _24S
 
                     DJIVirtualRemoteController.Instance.UpdateJoystickValue(pitch, roll, yaw, throttle);
                     resultCode = SDKError.NO_ERROR.ToString();//TODO
-                    System.Diagnostics.Debug.WriteLine(resultCode.ToString());
-
                 }else if (command.Equals("GO_HOME"))
                 {
                     SDKError err =await DJIVirtualRemoteController.Instance.GoHome();

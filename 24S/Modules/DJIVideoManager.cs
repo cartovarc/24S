@@ -121,7 +121,6 @@ namespace _24S
             videoParser.PushVideoData(0, 0, bytes, bytes.Length);
         }
 
-        private int countFrame = 0; // use to inspect fps on video test
         public Task sendVideoToClientInOrder(byte[] data, int width, int height)
         {
             return Task.Factory.StartNew(
@@ -130,12 +129,6 @@ namespace _24S
                     {
                         if (videoClient != null)
                         {
-                            if (countFrame % 100 == 0 && videoTest)
-                            {
-                                int fps = (int)(countFrame / (clock.ElapsedMilliseconds / 1000.0));
-                                System.Diagnostics.Debug.WriteLine("fps: {0}", fps);
-
-                            }
                             videoClient.Write(data, 0, data.Length); // send bytes to the client
                         }
                     }
@@ -151,20 +144,14 @@ namespace _24S
 
 
         //Decode data. Do nothing here. This function would return a bytes array with image data in RGBA format.
+        private int countFrame = 0; // use for limit half fps
         async void ReceiveDecodedData(byte[] data, int width, int height)
         {
-
-            //System.Diagnostics.Debug.WriteLine("W {0} H {1}", width, height);
-
-            if (videoClient != null)
+            if (videoClient != null && countFrame % 2 == 0)
             {
-                //System.Diagnostics.Debug.WriteLine("tamano: {0} {1} {2}", width, height, data.Length);
-                if (countFrame % 2 == 0)
-                {
-                    sendVideoToClientInOrder(data, width, height);
-                }
-                countFrame++;
+                sendVideoToClientInOrder(data, width, height);
             }
+            countFrame = (countFrame + 1) % 2;
         }
 
         //We need to set the camera type of the aircraft to the DJIVideoParser. After setting camera type, DJIVideoParser would correct the distortion of the video automatically.
@@ -211,7 +198,7 @@ namespace _24S
                     }
                     //TODO: Send stop video request
                     videoClient = null; // close connection with video client
-                    System.Diagnostics.Debug.WriteLine("STOP VIDEO CLIENT");
+                    LoggingServices.Instance.WriteLine<DJIVideoManager>("STOP VIDEO CLIENT: ", MetroLog.LogLevel.Trace);
 
                 });
 

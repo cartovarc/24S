@@ -39,12 +39,12 @@ namespace _24S
                 // Enter the listening loop.
                 while (true)
                 {
-                    Debug.WriteLine("Waiting for a connection... ");
+                    LoggingServices.Instance.WriteLine<SocketServer>("Waiting for a connection... ", MetroLog.LogLevel.Info);
 
                     // Perform a blocking call to accept requests.
                     // You could also user server.AcceptSocket() here.
                     TcpClient client = await server.AcceptTcpClientAsync();
-                    Debug.WriteLine("Connected!");
+                    LoggingServices.Instance.WriteLine<SocketServer>("Client connected", MetroLog.LogLevel.Info);
 
                     data = null;
 
@@ -59,7 +59,7 @@ namespace _24S
             }
             catch (SocketException e)
             {
-                Debug.WriteLine("SocketException: {0}", e);
+                LoggingServices.Instance.WriteLine<SocketServer>("SocketException: " + e.ToString(), MetroLog.LogLevel.Error);
             }
             finally
             {
@@ -89,7 +89,6 @@ namespace _24S
                     // Translate data bytes to a ASCII string.
                     data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
                     NotifySubscribers(stream, data);
-                    //Debug.WriteLine("Received: {0}", data);
 
                     // Process the data sent by the client.
                     //data = data.ToUpper();
