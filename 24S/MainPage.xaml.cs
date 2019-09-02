@@ -20,7 +20,7 @@ namespace _24S
             LoggingServices.Instance.WriteLine<MainPage>("Application starting...", MetroLog.LogLevel.Info);
 
             //Replace with your registered App Key. Make sure your App Key matched your application's package name on DJI developer center.
-            DJISDKManager.Instance.RegisterApp("979d9e5b7053c25f2d50c2f9");
+            DJISDKManager.Instance.RegisterApp("745da1477351362893a18d4b");
 
             //Initialize Socket Server
             Task

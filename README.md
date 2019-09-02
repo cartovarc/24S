@@ -33,4 +33,4 @@ With "24S.sln" solution opened:
 
 ## Useful commands:
 - CheckNetIsolation.exe LoopbackExempt -s
-- CheckNetIsolation.exe LoopbackExempt -is -n=com.rosas24s.integrator_p4yrhxa6ey1na
+- CheckNetIsolation.exe LoopbackExempt -is -n=com.bluearas24s-package.integrator_f1z0bx2h03dre

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="com.rosas24s.integrator" Publisher="CN=CLIENTE" Version="1.0.1.0" />
+  <Identity Name="com.24s-principal.integrator" Publisher="CN=CLIENTE" Version="1.0.1.0" />
   <mp:PhoneIdentity PhoneProductId="2f43dcb1-4e1f-420b-8aba-ae1a7806f07d" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>24S</DisplayName>
