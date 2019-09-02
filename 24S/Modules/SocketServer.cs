@@ -24,7 +24,7 @@ namespace _24S
             {
                 // Set the TcpListener on port 11111.
                 Int32 port = 11111;
-                IPAddress localAddr = IPAddress.Parse("127.0.0.1");
+                IPAddress localAddr = IPAddress.Parse("0.0.0.0");
 
                 // TcpListener server = new TcpListener(port);
                 server = new TcpListener(localAddr, port);

@@ -34,3 +34,6 @@ With "24S.sln" solution opened:
 ## Useful commands:
 - CheckNetIsolation.exe LoopbackExempt -s
 - CheckNetIsolation.exe LoopbackExempt -is -n=com.bluearas24s-package.integrator_f1z0bx2h03dre
+
+## Useful dirs:
+- C:\Users\<USER>\AppData\Local\Packages\com.bluearas24s-package.integrator_f1z0bx2h03dre\LocalState\MetroLogs
